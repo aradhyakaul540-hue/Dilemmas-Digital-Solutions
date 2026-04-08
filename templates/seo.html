@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO – Dilemmas Digital Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root { --green:#33ff00; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+        body { background:#000; color:#fff; overflow-x:hidden; }
+
+        .navbar {
+            position:fixed; top:0; width:100%;
+            padding:18px 60px;
+            display:flex; justify-content:space-between; align-items:center;
+            background:rgba(0,0,0,0.75); backdrop-filter:blur(12px); z-index:1000;
+        }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo img { height:40px; }
+        .logo-text span { font-size:22px; font-weight:700; color:#fff; }
+        .logo-text small { font-size:22px; font-weight:700; color:var(--green); }
+        .nav-links { display:flex; gap:30px; }
+        .nav-links a { color:#fff; text-decoration:none; font-weight:500; transition:.3s; }
+        .nav-links a:hover { color:var(--green); }
+        .nav-cta { padding:9px 24px; background:var(--green); color:#000; border-radius:25px; font-weight:700; text-decoration:none; transition:.3s; }
+        .nav-cta:hover { background:#28cc00; }
+
+        .service-hero {
+            min-height:100vh; display:flex; align-items:center; justify-content:center;
+            position:relative; overflow:hidden; text-align:center; padding:140px 20px 80px;
+            background:radial-gradient(ellipse at 70% 30%, rgba(51,255,0,0.07) 0%, transparent 60%),
+                        radial-gradient(ellipse at 15% 70%, rgba(0,200,255,0.04) 0%, transparent 55%), #000;
+        }
+        .hero-badge { display:inline-block; padding:6px 20px; border:1px solid rgba(51,255,0,0.4); border-radius:30px; color:var(--green); font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-bottom:22px; }
+        .service-hero h1 { font-size:clamp(2.8rem,6vw,5rem); font-weight:800; line-height:1.1; margin-bottom:22px; }
+        .service-hero h1 span { color:var(--green); }
+        .service-hero p { max-width:640px; margin:0 auto 40px; font-size:1.15rem; color:#aaa; line-height:1.8; }
+        .hero-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+        .btn-primary { padding:13px 34px; background:var(--green); color:#000; border-radius:30px; font-weight:700; text-decoration:none; transition:.3s; }
+        .btn-primary:hover { background:#28cc00; transform:translateY(-2px); }
+        .btn-outline { padding:13px 34px; border:1px solid rgba(255,255,255,0.25); color:#fff; border-radius:30px; font-weight:600; text-decoration:none; transition:.3s; }
+        .btn-outline:hover { border-color:var(--green); color:var(--green); }
+
+        /* Stats Bar */
+        .stats-bar { background:#060a06; border-top:1px solid #111; border-bottom:1px solid #111; padding:40px 20px; }
+        .stats-grid { max-width:900px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:20px; text-align:center; }
+        .stat-item h3 { font-size:2.2rem; font-weight:800; color:var(--green); }
+        .stat-item p { color:#777; font-size:.9rem; }
+
+        section { padding:100px 20px; }
+        .section-label { color:var(--green); font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-bottom:14px; display:block; }
+        .section-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; margin-bottom:16px; }
+        .section-sub { color:#888; font-size:1.05rem; line-height:1.8; max-width:680px; }
+        .container { max-width:1200px; margin:0 auto; }
+
+        .services-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:28px; margin-top:60px; }
+        .svc-card {
+            background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+            border-radius:20px; padding:36px 28px; transition:.4s; position:relative; overflow:hidden;
+        }
+        .svc-card::after { content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,var(--green),transparent); opacity:0; transition:.4s; }
+        .svc-card:hover { transform:translateY(-8px); border-color:rgba(51,255,0,0.25); }
+        .svc-card:hover::after { opacity:1; }
+        .svc-icon { width:54px; height:54px; border-radius:14px; background:rgba(51,255,0,0.08); display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:20px; }
+        .svc-card h3 { font-size:1.2rem; font-weight:700; margin-bottom:10px; }
+        .svc-card p { color:#888; font-size:.95rem; line-height:1.7; }
+        .svc-card ul { color:#888; font-size:.9rem; line-height:1.9; list-style:none; margin-top:12px; }
+        .svc-card ul li::before { content:"✓ "; color:var(--green); font-weight:700; }
+
+        /* Comparison table */
+        .table-section { background:#040804; }
+        .seo-table { width:100%; border-collapse:collapse; margin-top:50px; font-size:.95rem; }
+        .seo-table th { background:rgba(51,255,0,0.1); color:var(--green); padding:16px 20px; text-align:left; border-bottom:1px solid rgba(51,255,0,0.2); }
+        .seo-table td { padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.05); color:#ccc; }
+        .seo-table tr:hover td { background:rgba(255,255,255,0.02); }
+        .tag { display:inline-block; padding:3px 12px; border-radius:20px; font-size:.78rem; font-weight:600; }
+        .tag.high { background:rgba(51,255,0,0.15); color:var(--green); }
+        .tag.med { background:rgba(255,165,0,0.15); color:orange; }
+
+        .process-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:24px; margin-top:60px; }
+        .step { text-align:center; padding:30px 20px; background:rgba(255,255,255,0.02); border-radius:16px; border:1px solid rgba(255,255,255,0.06); transition:.3s; }
+        .step:hover { border-color:rgba(51,255,0,0.25); transform:translateY(-4px); }
+        .step-num { width:64px; height:64px; border-radius:50%; background:rgba(51,255,0,0.08); border:1px solid rgba(51,255,0,0.3); display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; color:var(--green); margin:0 auto 16px; }
+        .step h4 { font-size:1rem; font-weight:700; margin-bottom:8px; }
+        .step p { color:#777; font-size:.85rem; line-height:1.6; }
+
+        .why-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:24px; margin-top:60px; }
+        .why-card { border-left:3px solid var(--green); padding:24px 24px 24px 28px; background:rgba(51,255,0,0.03); border-radius:0 12px 12px 0; }
+        .why-card h4 { font-size:1.05rem; font-weight:700; margin-bottom:8px; }
+        .why-card p { color:#888; font-size:.9rem; line-height:1.6; }
+
+        .cta-strip { background:linear-gradient(135deg,rgba(51,255,0,0.1),rgba(0,0,0,0) 60%),rgba(255,255,255,0.02); border:1px solid rgba(51,255,0,0.2); border-radius:24px; padding:70px 40px; text-align:center; margin:0 auto; max-width:860px; }
+        .cta-strip h2 { font-size:clamp(1.6rem,3.5vw,2.4rem); font-weight:800; margin-bottom:16px; }
+        .cta-strip p { color:#888; margin-bottom:36px; font-size:1.05rem; }
+
+        .page-footer { background:#000; border-top:1px solid #111; padding:30px 60px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+        .page-footer span { color:#555; font-size:13px; }
+        .page-footer a { color:var(--green); text-decoration:none; font-size:13px; }
+
+        @media(max-width:768px) { .navbar { padding:16px 20px; } .nav-links { display:none; } .page-footer { padding:24px 20px; flex-direction:column; text-align:center; } }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">
+        <img src="/static/assets/logo.png" alt="DDS Logo">
+        <div class="logo-text"><span>Dilemmas Digital</span><small>Solutions</small></div>
+    </a>
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="{{ url_for('branding') }}">Branding</a>
+        <a href="{{ url_for('paid_marketing') }}">Paid Ads</a>
+        <a href="{{ url_for('social_media') }}">Social Media</a>
+        <a href="{{ url_for('web_development') }}">Web Dev</a>
+    </nav>
+    <a href="/#about-company" class="nav-cta">Get a Quote</a>
+</header>
+
+<section class="service-hero">
+    <div>
+        <div class="hero-badge">📈 SEO Services</div>
+        <h1>Rank Higher.<br><span>Grow Faster.</span><br>Convert More.</h1>
+        <p>Data-driven SEO strategies that get your business to the top of Google and keep it there — driving qualified organic traffic that actually converts.</p>
+        <div class="hero-btns">
+            <a href="/#about-company" class="btn-primary">Get a Free SEO Audit</a>
+            <a href="#services" class="btn-outline">Our SEO Services ↓</a>
+        </div>
+    </div>
+</section>
+
+<div class="stats-bar">
+    <div class="stats-grid">
+        <div class="stat-item"><h3>3x</h3><p>Avg. Traffic Growth</p></div>
+        <div class="stat-item"><h3>90%</h3><p>Client Retention Rate</p></div>
+        <div class="stat-item"><h3>180+</h3><p>Keywords Ranked</p></div>
+        <div class="stat-item"><h3>6mo</h3><p>Avg. to Page 1 Results</p></div>
+    </div>
+</div>
+
+<section id="services">
+    <div class="container">
+        <span class="section-label">What We Offer</span>
+        <h2 class="section-title">Complete SEO Solutions</h2>
+        <p class="section-sub">From keyword discovery to technical audits to link building — we cover the full spectrum of search engine optimisation.</p>
+
+        <div class="services-grid">
+
+            <div class="svc-card">
+                <div class="svc-icon">🔑</div>
+                <h3>Keyword Strategy</h3>
+                <p>Find the exact search terms your ideal customers use and build a data-backed content plan around them.</p>
+                <ul>
+                    <li>Competitor keyword gap analysis</li>
+                    <li>Long-tail keyword discovery</li>
+                    <li>Search intent mapping</li>
+                    <li>Keyword difficulty scoring</li>
+                    <li>Topic cluster planning</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">📄</div>
+                <h3>On-Page SEO</h3>
+                <p>Optimize every page of your site so Google understands, trusts, and ranks your content higher.</p>
+                <ul>
+                    <li>Title tags & meta descriptions</li>
+                    <li>Header tag optimization</li>
+                    <li>Internal linking strategy</li>
+                    <li>Image alt text & schema markup</li>
+                    <li>Content optimization & E-E-A-T</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">🔗</div>
+                <h3>Off-Page SEO</h3>
+                <p>Build domain authority through high-quality backlinks and digital PR that Google rewards.</p>
+                <ul>
+                    <li>White-hat link building</li>
+                    <li>Guest posting outreach</li>
+                    <li>Digital PR campaigns</li>
+                    <li>Brand mention building</li>
+                    <li>Toxic backlink disavow</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">📍</div>
+                <h3>Local SEO</h3>
+                <p>Dominate local search results and Google Maps for your city or region — driving foot traffic and local leads.</p>
+                <ul>
+                    <li>Google Business Profile optimization</li>
+                    <li>Local citation building</li>
+                    <li>Review generation strategy</li>
+                    <li>NAP consistency audit</li>
+                    <li>Local keyword targeting</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">✍️</div>
+                <h3>Content Marketing</h3>
+                <p>SEO-powered content that ranks, engages, and converts — from blog posts to landing pages to pillar content.</p>
+                <ul>
+                    <li>Content strategy & calendar</li>
+                    <li>Blog & article writing</li>
+                    <li>Pillar page creation</li>
+                    <li>Content refresh & repurposing</li>
+                    <li>Conversion copywriting</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">⚙️</div>
+                <h3>Technical SEO</h3>
+                <p>Fix the hidden issues that hold your rankings back — speed, crawlability, structure, and Core Web Vitals.</p>
+                <ul>
+                    <li>Site speed optimization</li>
+                    <li>Core Web Vitals fixes</li>
+                    <li>XML sitemap & robots.txt</li>
+                    <li>Crawl error resolution</li>
+                    <li>Mobile-first audit</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="table-section">
+    <div class="container">
+        <span class="section-label">SEO Service Breakdown</span>
+        <h2 class="section-title">What's Included At Each Stage</h2>
+        <table class="seo-table">
+            <thead>
+                <tr><th>Service</th><th>Deliverable</th><th>Timeline</th><th>Impact</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Keyword Research</td><td>Keyword map & content plan</td><td>Week 1</td><td><span class="tag high">High</span></td></tr>
+                <tr><td>On-Page Optimization</td><td>Updated meta tags, headers, content</td><td>Weeks 1–3</td><td><span class="tag high">High</span></td></tr>
+                <tr><td>Technical SEO Audit</td><td>Issue report + fixes</td><td>Weeks 2–4</td><td><span class="tag high">High</span></td></tr>
+                <tr><td>Link Building Campaign</td><td>Monthly backlink reports</td><td>Ongoing</td><td><span class="tag high">High</span></td></tr>
+                <tr><td>Local SEO Setup</td><td>GBP optimization + citations</td><td>Weeks 1–2</td><td><span class="tag med">Medium</span></td></tr>
+                <tr><td>Content Creation</td><td>Blog posts, landing pages</td><td>Monthly</td><td><span class="tag high">High</span></td></tr>
+                <tr><td>Monthly Reporting</td><td>Rankings, traffic & ROI dashboard</td><td>Monthly</td><td><span class="tag med">Tracking</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- PROCESS -->
+<section>
+    <div class="container">
+        <span class="section-label">Our Approach</span>
+        <h2 class="section-title">How We Deliver SEO Results</h2>
+        <p class="section-sub">A proven, transparent process that turns search visibility into revenue.</p>
+        <div class="process-steps">
+            <div class="step"><div class="step-num">01</div><h4>Audit</h4><p>Full technical & content audit of your current site</p></div>
+            <div class="step"><div class="step-num">02</div><h4>Strategy</h4><p>Custom SEO roadmap with 90-day milestones</p></div>
+            <div class="step"><div class="step-num">03</div><h4>Implement</h4><p>On-page fixes, content creation, link building</p></div>
+            <div class="step"><div class="step-num">04</div><h4>Monitor</h4><p>Weekly rank tracking and performance review</p></div>
+            <div class="step"><div class="step-num">05</div><h4>Report</h4><p>Monthly dashboard with rankings, traffic & leads</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- WHY US -->
+<section style="background:#040804; padding:100px 20px;">
+    <div class="container">
+        <span class="section-label">Why DDS</span>
+        <h2 class="section-title">SEO That Actually Delivers</h2>
+        <div class="why-grid">
+            <div class="why-card"><h4>No Black-Hat Shortcuts</h4><p>100% white-hat techniques that build sustainable rankings, not risky quick-fixes.</p></div>
+            <div class="why-card"><h4>ROI-Focused Reporting</h4><p>We track what matters — leads, revenue, and growth — not just vanity metrics.</p></div>
+            <div class="why-card"><h4>Industry-Specific Knowledge</h4><p>We understand your niche and craft SEO that speaks to your exact target audience.</p></div>
+            <div class="why-card"><h4>Dedicated SEO Manager</h4><p>One expert managing your account with weekly updates and full transparency.</p></div>
+        </div>
+    </div>
+</section>
+
+<section style="padding:60px 20px 100px;">
+    <div class="container">
+        <div class="cta-strip">
+            <h2>Ready to Dominate Search Results?</h2>
+            <p>Get a free SEO audit and discover exactly what's holding your rankings back.</p>
+            <a href="/#about-company" class="btn-primary">Claim Your Free SEO Audit →</a>
+        </div>
+    </div>
+</section>
+
+<footer class="page-footer">
+    <span>© 2026 Dilemmas Digital Solutions. All Rights Reserved.</span>
+    <a href="/">← Back to Home</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio – Dilemmas Digital Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root { --green:#33ff00; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+        body { background:#000; color:#fff; overflow-x:hidden; }
+
+        /* ── NAVBAR ── */
+        .navbar { position:fixed; top:0; width:100%; padding:18px 60px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.8); backdrop-filter:blur(14px); z-index:1000; }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo img { height:40px; }
+        .logo-text span { font-size:22px; font-weight:700; color:#fff; }
+        .logo-text small { font-size:22px; font-weight:700; color:var(--green); }
+        .nav-links { display:flex; gap:30px; }
+        .nav-links a { color:#fff; text-decoration:none; font-weight:500; transition:.3s; }
+        .nav-links a:hover { color:var(--green); }
+        .nav-cta { padding:9px 24px; background:var(--green); color:#000; border-radius:25px; font-weight:700; text-decoration:none; }
+
+        /* ── HERO ── */
+        .page-hero {
+            min-height:55vh; display:flex; align-items:center; justify-content:center;
+            text-align:center; padding:160px 20px 80px; position:relative; overflow:hidden;
+            background:radial-gradient(ellipse at 50% 60%, rgba(51,255,0,0.09) 0%, transparent 65%), #000;
+        }
+        .floating-tags { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+        .tag-item {
+            position:absolute; padding:6px 16px; border-radius:30px;
+            background:rgba(51,255,0,0.06); border:1px solid rgba(51,255,0,0.15);
+            color:rgba(51,255,0,0.6); font-size:.8rem; font-weight:600;
+            animation:floatTag linear infinite;
+            white-space:nowrap;
+        }
+        @keyframes floatTag { 0%{transform:translateY(0) rotate(var(--rot));opacity:0.5} 50%{opacity:1} 100%{transform:translateY(-60px) rotate(var(--rot));opacity:0.3} }
+
+        .hero-badge { display:inline-block; padding:6px 20px; border:1px solid rgba(51,255,0,0.4); border-radius:30px; color:var(--green); font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-bottom:20px; position:relative; z-index:2; }
+        .page-hero h1 { font-size:clamp(2.4rem,5.5vw,4.2rem); font-weight:800; line-height:1.15; position:relative; z-index:2; }
+        .page-hero h1 span { color:var(--green); }
+        .page-hero p { color:#888; font-size:1.1rem; margin-top:16px; max-width:580px; margin-inline:auto; line-height:1.8; position:relative; z-index:2; }
+
+        /* ── STATS ── */
+        .stats-bar { background:#060a06; border-top:1px solid #111; border-bottom:1px solid #111; padding:40px 20px; }
+        .stats-grid { max-width:860px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:20px; text-align:center; }
+        .stat-item h3 { font-size:2.2rem; font-weight:800; color:var(--green); }
+        .stat-item p { color:#777; font-size:.88rem; }
+
+        /* ── COMMONS ── */
+        section { padding:100px 20px; }
+        .container { max-width:1200px; margin:0 auto; }
+        .section-label { color:var(--green); font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-bottom:14px; display:block; }
+        .section-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; margin-bottom:16px; }
+        .section-sub { color:#888; font-size:1.05rem; line-height:1.8; max-width:680px; }
+
+        /* ── FILTER TABS ── */
+        .filter-bar { display:flex; gap:12px; flex-wrap:wrap; margin:40px 0 50px; }
+        .filter-btn {
+            padding:9px 22px; border-radius:30px;
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.1);
+            color:#aaa; font-size:.88rem; font-weight:600;
+            cursor:pointer; transition:.3s; font-family:'Poppins',sans-serif;
+        }
+        .filter-btn.active, .filter-btn:hover { background:rgba(51,255,0,0.1); border-color:var(--green); color:var(--green); }
+
+        /* ── PORTFOLIO GRID ── */
+        .portfolio-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+            gap:28px;
+        }
+        .portfolio-card {
+            background:rgba(255,255,255,0.03);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:20px; overflow:hidden;
+            transition:.4s; position:relative;
+        }
+        .portfolio-card:hover { transform:translateY(-8px); border-color:rgba(51,255,0,0.3); box-shadow:0 20px 50px rgba(0,0,0,0.5); }
+        .card-visual {
+            height:200px; position:relative; overflow:hidden;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .card-visual .emoji-bg { font-size:64px; opacity:.15; position:absolute; }
+        .card-visual .overlay-label {
+            position:relative; z-index:2;
+            font-size:1rem; font-weight:700;
+            background:rgba(0,0,0,0.5); padding:8px 18px;
+            border-radius:30px; border:1px solid rgba(51,255,0,0.3);
+            color:var(--green);
+        }
+        .card-body { padding:24px; }
+        .card-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+        .card-tag { padding:4px 12px; border-radius:20px; font-size:.75rem; font-weight:600; background:rgba(51,255,0,0.1); color:var(--green); }
+        .card-tag.secondary { background:rgba(255,255,255,0.06); color:#aaa; }
+        .card-body h3 { font-size:1.15rem; font-weight:700; margin-bottom:8px; }
+        .card-body p { color:#777; font-size:.88rem; line-height:1.6; margin-bottom:16px; }
+        .card-results { display:flex; gap:16px; flex-wrap:wrap; }
+        .result-chip { font-size:.82rem; color:#ccc; display:flex; align-items:center; gap:6px; }
+        .result-chip::before { content:"↑"; color:var(--green); font-weight:700; }
+
+        /* ── TEAM ── */
+        .team-section { background:#040804; }
+        .team-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(420px,1fr)); gap:40px; margin-top:60px; justify-items:center; }
+
+        .team-card {
+            width:100%; max-width:480px;
+            background:linear-gradient(135deg, rgba(5,5,5,0.95), rgba(10,25,10,0.95));
+            border:1px solid rgba(51,255,0,0.25);
+            border-radius:24px; padding:36px;
+            box-shadow:0 0 30px rgba(51,255,0,0.12);
+            transition:.5s; position:relative; overflow:hidden;
+        }
+        .team-card::before {
+            content:""; position:absolute; inset:0;
+            background:radial-gradient(ellipse at 70% 20%, rgba(51,255,0,0.06) 0%, transparent 60%);
+            pointer-events:none;
+        }
+        .team-card:hover { transform:translateY(-12px); box-shadow:0 0 50px rgba(51,255,0,0.3); border-color:rgba(51,255,0,0.5); }
+
+        .team-top { display:flex; align-items:center; gap:22px; margin-bottom:24px; }
+        .team-img {
+            width:90px; height:90px; border-radius:50%; object-fit:cover;
+            border:3px solid rgba(51,255,0,0.5);
+            box-shadow:0 0 20px rgba(51,255,0,0.4);
+            animation:floatImg 4s ease-in-out infinite;
+        }
+        @keyframes floatImg { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .team-info h3 { font-size:1.3rem; font-weight:800; margin-bottom:4px; }
+        .team-info h4 { color:var(--green); font-size:.9rem; font-weight:600; }
+
+        .team-bio { color:#999; font-size:.92rem; line-height:1.7; margin-bottom:22px; }
+
+        .expertise-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+        .expertise-chip { padding:5px 14px; border-radius:20px; font-size:.78rem; font-weight:600; background:rgba(51,255,0,0.08); border:1px solid rgba(51,255,0,0.2); color:rgba(51,255,0,0.9); }
+
+        .team-links { display:flex; flex-direction:column; gap:10px; }
+        .team-link {
+            display:flex; align-items:center; gap:12px;
+            color:#ccc; font-size:.9rem; text-decoration:none;
+            padding:10px 14px; border-radius:10px;
+            background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+            transition:.3s;
+        }
+        .team-link:hover { border-color:rgba(51,255,0,0.3); color:var(--green); background:rgba(51,255,0,0.05); }
+        .team-link .link-icon { font-size:1rem; width:20px; text-align:center; }
+
+        /* ── SERVICES OFFERED VISUAL ── */
+        .services-list-section { background:#000; }
+        .services-wrap { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; margin-top:50px; }
+        .srv-item {
+            text-align:center; padding:32px 20px;
+            background:rgba(255,255,255,0.02);
+            border:1px solid rgba(255,255,255,0.06);
+            border-radius:18px; transition:.3s;
+        }
+        .srv-item:hover { border-color:rgba(51,255,0,0.3); transform:translateY(-5px); }
+        .srv-item .emoji { font-size:36px; display:block; margin-bottom:12px; }
+        .srv-item h4 { font-size:1rem; font-weight:700; margin-bottom:6px; }
+        .srv-item p { color:#666; font-size:.82rem; line-height:1.5; }
+
+        /* ── CTA ── */
+        .cta-strip { background:linear-gradient(135deg,rgba(51,255,0,0.1),transparent 60%),rgba(255,255,255,0.02); border:1px solid rgba(51,255,0,0.2); border-radius:24px; padding:70px 40px; text-align:center; margin:0 auto; max-width:860px; }
+        .cta-strip h2 { font-size:clamp(1.6rem,3.5vw,2.4rem); font-weight:800; margin-bottom:16px; }
+        .cta-strip p { color:#888; margin-bottom:36px; font-size:1.05rem; }
+        .btn-primary { padding:13px 34px; background:var(--green); color:#000; border-radius:30px; font-weight:700; text-decoration:none; transition:.3s; display:inline-block; }
+        .btn-primary:hover { background:#28cc00; transform:translateY(-2px); }
+
+        /* ── FOOTER ── */
+        .page-footer { background:#000; border-top:1px solid #111; padding:30px 60px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+        .page-footer span { color:#555; font-size:13px; }
+        .page-footer a { color:var(--green); text-decoration:none; font-size:13px; }
+
+        @media(max-width:768px) {
+            .navbar { padding:16px 20px; }
+            .nav-links { display:none; }
+            .team-grid { grid-template-columns:1fr; }
+            .page-footer { padding:24px 20px; flex-direction:column; text-align:center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <a href="/" class="logo">
+        <img src="/static/assets/logo.png" alt="DDS Logo">
+        <div class="logo-text"><span>Dilemmas Digital</span><small>Solutions</small></div>
+    </a>
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="{{ url_for('branding') }}">Services</a>
+        <a href="#">Blogs</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+    </nav>
+    <a href="{{ url_for('contact') }}" class="nav-cta">Work With Us</a>
+</header>
+
+<!-- HERO -->
+<div class="page-hero">
+    <div class="floating-tags" id="floatingTags"></div>
+    <div style="position:relative;z-index:2;">
+        <div class="hero-badge">🏆 Our Portfolio</div>
+        <h1>Work That<br><span>Speaks Louder</span><br>Than Words</h1>
+        <p>A showcase of brands built, campaigns run, and digital experiences crafted by the Dilemmas Digital Solutions team.</p>
+    </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+    <div class="stats-grid">
+        <div class="stat-item"><h3>50+</h3><p>Projects Delivered</p></div>
+        <div class="stat-item"><h3>20+</h3><p>Happy Clients</p></div>
+        <div class="stat-item"><h3>5</h3><p>Core Services</p></div>
+        <div class="stat-item"><h3>2</h3><p>Years in Business</p></div>
+        <div class="stat-item"><h3>100%</h3><p>Client Satisfaction</p></div>
+    </div>
+</div>
+
+<!-- PORTFOLIO WORK -->
+<section>
+    <div class="container">
+        <span class="section-label">Our Work</span>
+        <h2 class="section-title">Projects & Case Studies</h2>
+        <p class="section-sub">Real results for real businesses. Here's a sample of what we've delivered.</p>
+
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">All Projects</button>
+            <button class="filter-btn" data-filter="branding">Branding</button>
+            <button class="filter-btn" data-filter="seo">SEO</button>
+            <button class="filter-btn" data-filter="social">Social Media</button>
+            <button class="filter-btn" data-filter="paid">Paid Ads</button>
+            <button class="filter-btn" data-filter="web">Web Dev</button>
+        </div>
+
+        <div class="portfolio-grid" id="portfolioGrid">
+
+            <div class="portfolio-card" data-category="branding">
+                <div class="card-visual" style="background:linear-gradient(135deg,#0a1a0a,#152515);">
+                    <span class="emoji-bg">💎</span>
+                    <span class="overlay-label">Brand Identity</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-tags"><span class="card-tag">Branding</span><span class="card-tag secondary">Strategy</span></div>
+                    <h3>Full Brand Identity — Retail Startup</h3>
+                    <p>Complete brand system from scratch — logo, color palette, typography, brand guidelines and social media kit for a Delhi-based fashion startup.</p>
+                    <div class="card-results">
+                        <span class="result-chip">Brand recognition doubled in 3 months</span>
+                        <span class="result-chip">15+ asset deliverables</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-card" data-category="seo">
+                <div class="card-visual" style="background:linear-gradient(135deg,#0d1a0a,#0a1505);">
+                    <span class="emoji-bg">📈</span>
+                    <span class="overlay-label">SEO Campaign</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-tags"><span class="card-tag">SEO</span><span class="card-tag secondary">Content</span></div>
+                    <h3>Organic Growth — Home Services Business</h3>
+                    <p>Took a local home services company from virtually zero organic presence to top-3 Google rankings for 40+ target keywords in Delhi NCR.</p>
+                    <div class="card-results">
+                        <span class="result-chip">340% organic traffic growth</span>
+                        <span class="result-chip">40+ keywords on page 1</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-card" data-category="paid">
+                <div class="card-visual" style="background:linear-gradient(135deg,#1a0d0a,#251005);">
+                    <span class="emoji-bg">💰</span>
+                    <span class="overlay-label">Google Ads</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-tags"><span class="card-tag">Google Ads</span><span class="card-tag secondary">Lead Gen</span></div>
+                    <h3>Lead Generation — Education Institute</h3>
+                    <p>Ran high-intent Google Search campaigns for an ed-tech institute targeting students and parents — drove 200+ qualified monthly leads.</p>
+                    <div class="card-results">
+                        <span class="result-chip">5.2x ROAS achieved</span>
+                        <span class="result-chip">CPL reduced by 42%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-card" data-category="social">
+                <div class="card-visual" style="background:linear-gradient(135deg,#0a0d1a,#050a20);">
+                    <span class="emoji-bg">🚀</span>
+                    <span class="overlay-label">Social Growth</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-tags"><span class="card-tag">Social Media</span><span class="card-tag secondary">Content</span></div>
+                    <h3>Instagram Growth — F&B Brand</h3>
+                    <p>Managed full Instagram presence for a food & beverage brand — content, reels, stories, and community management driving organic follower growth.</p>
+                    <div class="card-results">
+                        <span class="result-chip">0 → 12K followers in 6 months</span>
+                        <span class="result-chip">8x engagement lift</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-card" data-category="web">
+                <div class="card-visual" style="background:linear-gradient(135deg,#0a1510,#050f0a);">
+                    <span class="emoji-bg">💻</span>
+                    <span class="overlay-label">Web Development</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-tags"><span class="card-tag">Web Dev</span><span class="card-tag secondary">React</span></div>
+                    <h3>Business Website — Professional Services</h3>
+                    <p>Built a fast, SEO-optimised React + Flask website for a consulting firm — complete with CRM integration, contact forms, and admin panel.</p>
+                    <div class="card-results">
+                        <span class="result-chip">&lt;1.8s load time</span>
+                        <span class="result-chip">99 Google PageSpeed score</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-card" data-category="branding">
+                <div class="card-visual" style="background:linear-gradient(135deg,#151005,#1a0f00);">
+                    <span class="emoji-bg">🛡️</span>
+                    <span class="overlay-label">ORM Campaign</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-tags"><span class="card-tag">Branding</span><span class="card-tag secondary">ORM</span></div>
+                    <h3>Reputation Management — Healthcare Client</h3>
+                    <p>Full ORM strategy for a healthcare brand — suppressed negative results, built authoritative content, and improved Google star rating from 3.2 to 4.6.</p>
+                    <div class="card-results">
+                        <span class="result-chip">Rating 3.2 → 4.6 stars</span>
+                        <span class="result-chip">Negative results suppressed</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- MEET THE TEAM -->
+<section class="team-section" id="team">
+    <div class="container">
+        <span class="section-label">The People Behind the Work</span>
+        <h2 class="section-title">Meet Our Founding Team</h2>
+        <p class="section-sub">Two passionate digital professionals with a shared vision — to help brands grow smarter in the digital world.</p>
+
+        <div class="team-grid">
+
+            <!-- Tanishq -->
+            <div class="team-card">
+                <div class="team-top">
+                    <img src="/static/assets/team1.jpeg" alt="Tanishq Gour" class="team-img">
+                    <div class="team-info">
+                        <h3>Tanishq Gour</h3>
+                        <h4>Founder & Managing Director</h4>
+                    </div>
+                </div>
+                <p class="team-bio">
+                    Tanishq is the visionary behind Dilemmas Digital Solutions. With a deep passion for brand strategy and digital marketing, he leads client relationships, campaign strategy, and business growth — helping brands unlock their full potential in the digital space.
+                </p>
+                <div class="expertise-chips">
+                    <span class="expertise-chip">Brand Strategy</span>
+                    <span class="expertise-chip">SEO</span>
+                    <span class="expertise-chip">Paid Marketing</span>
+                    <span class="expertise-chip">Business Development</span>
+                    <span class="expertise-chip">ORM</span>
+                </div>
+                <div class="team-links">
+                    <a href="mailto:dilemmasdigitalsolutions@gmail.com" class="team-link">
+                        <span class="link-icon">📧</span> dilemmasdigitalsolutions@gmail.com
+                    </a>
+                    <a href="https://www.linkedin.com/in/tanishq-gour-b57b19331/" target="_blank" class="team-link">
+                        <span class="link-icon">💼</span> linkedin.com/in/tanishq-gour
+                    </a>
+                    <a href="tel:+918005643472" class="team-link">
+                        <span class="link-icon">📱</span> +91 80056-43472
+                    </a>
+                </div>
+            </div>
+
+            <!-- Aradhya -->
+            <div class="team-card">
+                <div class="team-top">
+                    <img src="/static/assets/team2.jpeg" alt="Aradhya Kaul" class="team-img">
+                    <div class="team-info">
+                        <h3>Aradhya Kaul</h3>
+                        <h4>Senior Website Developer</h4>
+                    </div>
+                </div>
+                <p class="team-bio">
+                    Aradhya is the technical powerhouse of DDS. He designs and develops high-performance websites, web applications, and digital experiences — combining clean engineering with intuitive UX to build digital products that are both beautiful and measurably effective.
+                </p>
+                <div class="expertise-chips">
+                    <span class="expertise-chip">React / Next.js</span>
+                    <span class="expertise-chip">Python / Flask</span>
+                    <span class="expertise-chip">UI/UX Design</span>
+                    <span class="expertise-chip">PWA & Web Apps</span>
+                    <span class="expertise-chip">Performance Opt.</span>
+                </div>
+                <div class="team-links">
+                    <a href="mailto:aradhyakaul540@gmail.com" class="team-link">
+                        <span class="link-icon">📧</span> aradhyakaul540@gmail.com
+                    </a>
+                    <a href="https://www.linkedin.com/in/aradhya-kaul-237459386/" target="_blank" class="team-link">
+                        <span class="link-icon">💼</span> linkedin.com/in/aradhya-kaul
+                    </a>
+                    <a href="tel:+918005643472" class="team-link">
+                        <span class="link-icon">📱</span> +91 80056-43472
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES LIST -->
+<section class="services-list-section">
+    <div class="container">
+        <span class="section-label">What We Do</span>
+        <h2 class="section-title">Our Full Range of Services</h2>
+        <div class="services-wrap">
+            <a href="{{ url_for('branding') }}" style="text-decoration:none;color:inherit;">
+                <div class="srv-item"><span class="emoji">💎</span><h4>Branding</h4><p>Identity, strategy & ORM</p></div>
+            </a>
+            <a href="{{ url_for('seo') }}" style="text-decoration:none;color:inherit;">
+                <div class="srv-item"><span class="emoji">📈</span><h4>SEO</h4><p>Rank higher, grow organically</p></div>
+            </a>
+            <a href="{{ url_for('paid_marketing') }}" style="text-decoration:none;color:inherit;">
+                <div class="srv-item"><span class="emoji">💰</span><h4>Paid Ads</h4><p>Google, Meta & YouTube</p></div>
+            </a>
+            <a href="{{ url_for('social_media') }}" style="text-decoration:none;color:inherit;">
+                <div class="srv-item"><span class="emoji">📲</span><h4>Social Media</h4><p>Content, growth & management</p></div>
+            </a>
+            <a href="{{ url_for('web_development') }}" style="text-decoration:none;color:inherit;">
+                <div class="srv-item"><span class="emoji">💻</span><h4>Web Development</h4><p>Sites, apps & Telegram mini-apps</p></div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:60px 20px 100px;">
+    <div class="container">
+        <div class="cta-strip">
+            <h2>Like What You See?</h2>
+            <p>Let's create your success story. Get in touch and we'll get started right away.</p>
+            <a href="{{ url_for('contact') }}" class="btn-primary">Start Your Project →</a>
+        </div>
+    </div>
+</section>
+
+<footer class="page-footer">
+    <span>© 2026 Dilemmas Digital Solutions. All Rights Reserved.</span>
+    <a href="/">← Back to Home</a>
+</footer>
+
+<script>
+// ── Floating tags background ──
+const tags = ['Branding','SEO','Google Ads','Social Media','Web Dev','ORM','UI/UX','React','Flask','Reels','Campaigns','Growth'];
+const container = document.getElementById('floatingTags');
+tags.forEach((tag, i) => {
+    const el = document.createElement('div');
+    el.className = 'tag-item';
+    el.textContent = tag;
+    el.style.left   = (8 + (i % 6) * 16) + '%';
+    el.style.top    = (20 + Math.random()*60) + '%';
+    el.style.setProperty('--rot', (Math.random()*10 - 5) + 'deg');
+    el.style.animationDuration  = (6 + Math.random()*6) + 's';
+    el.style.animationDelay    = (-Math.random()*6) + 's';
+    container.appendChild(el);
+});
+
+// ── Portfolio filter ──
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.portfolio-card').forEach(card => {
+            if (filter === 'all' || card.dataset.category === filter) {
+                card.style.display = '';
+                card.style.animation = 'none';
+                card.offsetHeight; // reflow
+                card.style.animation = 'fadeIn .4s ease';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+
+<style>
+@keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+</style>
+
+</body>
+</html>

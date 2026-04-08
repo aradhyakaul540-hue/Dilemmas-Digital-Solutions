@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilemmas Digital Solutions</title>
+
+    <!-- Flask CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+
+    <!-- Logo -->
+    <div class="logo">
+        <img src="/static/assets/logo.png" alt="DDS Logo">
+        <div class="logo-text">
+            <span>Dilemmas Digital</span>
+            <small>Solutions</small>
+        </div>
+    </div>
+
+    <!-- Hamburger -->
+    <div class="hamburger" id="hamburger">☰</div>
+
+    <!-- Navigation -->
+    <nav class="nav-menu" id="navMenu">
+        <a href="/">Home</a>
+
+        <div class="admin">
+            <a href="/admin">Admin</a>
+        </div>
+
+        <!-- ===== SERVICES MEGA MENU ===== -->
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Services ▾</a>
+
+            <div class="mega-menu">
+
+                <div class="menu-column">
+                    <h3><a href="{{ url_for('branding') }}">Branding</a></h3>
+                    <a href="{{ url_for('branding') }}">Research & Analysis</a>
+                    <a href="{{ url_for('branding') }}">Brand Identity</a>
+                    <a href="{{ url_for('branding') }}">Brand Assets</a>
+                    <a href="{{ url_for('branding') }}">Strategy</a>
+                    <a href="{{ url_for('branding') }}">ORM</a>
+                </div>
+
+                <div class="menu-column">
+                    <h3><a href="{{ url_for('seo') }}">SEO</a></h3>
+                    <a href="{{ url_for('seo') }}">Keyword Strategy</a>
+                    <a href="{{ url_for('seo') }}">On-Page SEO</a>
+                    <a href="{{ url_for('seo') }}">Off-Page SEO</a>
+                    <a href="{{ url_for('seo') }}">Local SEO</a>
+                    <a href="{{ url_for('seo') }}">Content Marketing</a>
+                </div>
+
+                <div class="menu-column">
+                    <h3><a href="{{ url_for('paid_marketing') }}">Paid Marketing</a></h3>
+                    <a href="{{ url_for('paid_marketing') }}">Google Ads</a>
+                    <a href="{{ url_for('paid_marketing') }}">Social Ads</a>
+                    <a href="{{ url_for('paid_marketing') }}">YouTube Ads</a>
+                    <a href="{{ url_for('paid_marketing') }}">Lead Generation</a>
+                </div>
+
+                <div class="menu-column">
+                    <h3><a href="{{ url_for('social_media') }}">Social Media</a></h3>
+                    <a href="{{ url_for('social_media') }}">Content Creation</a>
+                    <a href="{{ url_for('social_media') }}">Account Management</a>
+                    <a href="{{ url_for('social_media') }}">Influencer Marketing</a>
+                    <a href="{{ url_for('social_media') }}">Followers Growth</a>
+                </div>
+
+                <div class="menu-column">
+                    <h3><a href="{{ url_for('web_development') }}">Web Development</a></h3>
+                    <a href="{{ url_for('web_development') }}">Open Source Development</a>
+                    <a href="{{ url_for('web_development') }}">Frontend Development</a>
+                    <a href="{{ url_for('web_development') }}">Backend Development</a>
+                    <a href="{{ url_for('web_development') }}">Web Apps & PWA's</a>
+                    <a href="{{ url_for('web_development') }}">Mini Telegram</a>
+                </div>
+
+            </div>
+        </div>
+
+        <a href="{{ url_for('portfolio') }}">Portfolio</a>
+        <a href="{{ url_for('contact') }}">Contact Us</a>
+    </nav>
+</header>
+
+<!-- ================= SPLASH SCREEN ================= -->
+<div id="splash-screen">
+    <img src="/static/assets/logo.png" alt="DDS Logo" class="splash-logo">
+    <h1 class="splash-text">
+        <span class="white">Dilemmas Digital</span>
+        <span class="green">Solutions</span>
+    </h1>
+</div>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div id="main-content" style="display:none;">
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>
+                Welcome to Your<br>
+                <span>Growth-Driven</span><br>
+                Digital Partner
+            </h1>
+        </div>
+
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about-company" class="about-section">
+        <div class="overlay">
+            <div class="about-container">
+                <h2>About Dilemmas Digital Solutions</h2>
+                <p>
+                    Dilemmas Digital Solutions is a full-stack creative and marketing agency
+                    built for brands that want to grow faster, scale smarter,
+                    and lead with confidence in today’s digital world.
+                </p>
+                <button class="btn" id="openForm">Get in Touch</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services-section">
+        <h2 class="section-title">Our Premium Services</h2>
+
+        <div class="services-container">
+
+            <div class="service-card">
+                <h3><a href="{{ url_for('branding') }}">Branding</a></h3>
+                <p>Powerful identity & strategy that builds trust and recognition.</p>
+            </div>
+
+            <div class="service-card">
+                <h3><a href="{{ url_for('seo') }}">SEO Optimization</a></h3>
+                <p>Rank higher on Google and drive organic traffic that converts.</p>
+            </div>
+
+            <div class="service-card">
+                <h3><a href="{{ url_for('paid_marketing') }}">Paid Advertising</a></h3>
+                <p>High-ROI campaigns across Google, Meta & YouTube.</p>
+            </div>
+
+            <div class="service-card">
+                <h3><a href="{{ url_for('social_media') }}">Social Media Growth</a></h3>
+                <p>Engaging content that grows followers and brand authority.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================= TEAM / FOOTER ================= -->
+    <footer class="footer">
+        <h2 class="footer-title">Meet Our Team</h2>
+
+        <div class="team-container">
+
+            <div class="team-card slide-left">
+                <img src="/static/assets/team1.jpeg" alt="Team Member 1">
+                <h3>Tanishq Gour</h3>
+                <h4>Founder & MD</h4>
+                <p>📧 <a href="mailto:dilemmasdigitalsolutions@gmail.com">dilemmasdigitalsolutions@gmail.com</a></p>
+                <p>💻 <a href="https://www.linkedin.com/in/tanishq-gour-b57b19331/" target="_blank">LinkedIn Profile</a></p>
+                <p>📱 +91 80056-43472</p>
+            </div>
+
+            <div class="team-card slide-right">
+                <img src="/static/assets/team2.jpeg" alt="Team Member 2">
+                <h3>Aradhya Kaul</h3>
+                <h4>Senior Website Developer</h4>
+                <p>📧 <a href="mailto:aradhyakaul540@gmail.com">aradhyakaul540@gmail.com</a></p>
+                <p>💻 <a href="https://www.linkedin.com/in/aradhya-kaul-237459386/" target="_blank">LinkedIn Profile</a></p>
+                <p>📱 +91 80056-43472</p>
+            </div>
+
+        </div>
+
+        <div class="copyright">
+            © 2026 Dilemmas Digital Solutions. All Rights Reserved.
+        </div>
+    </footer>
+</div>
+
+<!-- ================= CONTACT MODAL ================= -->
+<div class="contact-modal" id="contactModal">
+    <div class="contact-box">
+        <span class="close-btn" id="closeForm">&times;</span>
+        <h2>Get in Touch</h2>
+
+        <form id="contactForm">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="text" name="company" placeholder="Company Name">
+            <input type="tel" name="contact" placeholder="Contact Number" required>
+            <input type="email" name="email" placeholder="Mail ID" required>
+            <textarea name="address" placeholder="Address" rows="3"></textarea>
+
+            <select name="service" required>
+                <option value="">Select Service</option>
+                <option>Branding</option>
+                <option>SEO</option>
+                <option>Paid Marketing</option>
+                <option>Social Media Management</option>
+                <option>Website Development</option>
+            </select>
+
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<script>
+
+// FORM SUBMIT → FLASK
+document.getElementById("contactForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const data = {
+        name: this.name.value,
+        company: this.company.value,
+        phone: this.contact.value,
+        email: this.email.value,
+        address: this.address.value,
+        service: this.service.value
+    };
+
+    const res = await fetch("/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (result.status === "success") {
+        alert("Request submitted successfully!");
+        this.reset();
+    } else {
+        alert("Error submitting form.");
+    }
+});
+
+// MODAL
+const openBtn = document.getElementById("openForm");
+const modal = document.getElementById("contactModal");
+const closeBtn = document.getElementById("closeForm");
+
+openBtn.onclick = () => modal.style.display = "flex";
+closeBtn.onclick = () => modal.style.display = "none";
+window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+
+// SPLASH
+window.addEventListener("load", () => {
+    const splash = document.getElementById('splash-screen');
+    const mainContent = document.getElementById('main-content');
+
+    setTimeout(() => {
+        splash.style.opacity = '0';
+        setTimeout(() => {
+            splash.style.display = 'none';
+            mainContent.style.display = 'block';
+        }, 1000);
+    }, 3000);
+});
+
+// HAMBURGER
+const hamburger = document.getElementById("hamburger");
+const navMenu = document.getElementById("navMenu");
+hamburger.addEventListener("click", () => navMenu.classList.toggle("show"));
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paid Marketing – Dilemmas Digital Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root { --green:#33ff00; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+        body { background:#000; color:#fff; overflow-x:hidden; }
+
+        .navbar { position:fixed; top:0; width:100%; padding:18px 60px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.75); backdrop-filter:blur(12px); z-index:1000; }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo img { height:40px; }
+        .logo-text span { font-size:22px; font-weight:700; color:#fff; }
+        .logo-text small { font-size:22px; font-weight:700; color:var(--green); }
+        .nav-links { display:flex; gap:30px; }
+        .nav-links a { color:#fff; text-decoration:none; font-weight:500; transition:.3s; }
+        .nav-links a:hover { color:var(--green); }
+        .nav-cta { padding:9px 24px; background:var(--green); color:#000; border-radius:25px; font-weight:700; text-decoration:none; transition:.3s; }
+        .nav-cta:hover { background:#28cc00; }
+
+        .service-hero {
+            min-height:100vh; display:flex; align-items:center; justify-content:center;
+            text-align:center; padding:140px 20px 80px; position:relative; overflow:hidden;
+            background:radial-gradient(ellipse at 50% 40%, rgba(51,255,0,0.09) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 80%, rgba(255,100,0,0.04) 0%, transparent 50%), #000;
+        }
+        .hero-badge { display:inline-block; padding:6px 20px; border:1px solid rgba(51,255,0,0.4); border-radius:30px; color:var(--green); font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-bottom:22px; }
+        .service-hero h1 { font-size:clamp(2.8rem,6vw,5rem); font-weight:800; line-height:1.1; margin-bottom:22px; }
+        .service-hero h1 span { color:var(--green); }
+        .service-hero p { max-width:640px; margin:0 auto 40px; font-size:1.15rem; color:#aaa; line-height:1.8; }
+        .hero-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+        .btn-primary { padding:13px 34px; background:var(--green); color:#000; border-radius:30px; font-weight:700; text-decoration:none; transition:.3s; }
+        .btn-primary:hover { background:#28cc00; transform:translateY(-2px); }
+        .btn-outline { padding:13px 34px; border:1px solid rgba(255,255,255,0.25); color:#fff; border-radius:30px; font-weight:600; text-decoration:none; transition:.3s; }
+        .btn-outline:hover { border-color:var(--green); color:var(--green); }
+
+        .stats-bar { background:#060a06; border-top:1px solid #111; border-bottom:1px solid #111; padding:40px 20px; }
+        .stats-grid { max-width:900px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:20px; text-align:center; }
+        .stat-item h3 { font-size:2.2rem; font-weight:800; color:var(--green); }
+        .stat-item p { color:#777; font-size:.9rem; }
+
+        section { padding:100px 20px; }
+        .section-label { color:var(--green); font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-bottom:14px; display:block; }
+        .section-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; margin-bottom:16px; }
+        .section-sub { color:#888; font-size:1.05rem; line-height:1.8; max-width:680px; }
+        .container { max-width:1200px; margin:0 auto; }
+
+        /* Platform cards */
+        .platform-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:28px; margin-top:60px; }
+        .platform-card {
+            background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+            border-radius:22px; padding:40px 30px; transition:.4s; position:relative; overflow:hidden;
+        }
+        .platform-card:hover { transform:translateY(-10px); border-color:rgba(51,255,0,0.3); }
+        .platform-card:hover .platform-icon { transform:scale(1.1); }
+        .platform-icon { font-size:42px; margin-bottom:20px; display:block; transition:.4s; }
+        .platform-card h3 { font-size:1.4rem; font-weight:800; margin-bottom:12px; }
+        .platform-card > p { color:#888; font-size:.95rem; line-height:1.7; margin-bottom:20px; }
+        .feature-list { list-style:none; }
+        .feature-list li { color:#aaa; font-size:.9rem; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:10px; }
+        .feature-list li:last-child { border-bottom:none; }
+        .feature-list li::before { content:""; width:6px; height:6px; background:var(--green); border-radius:50%; flex-shrink:0; }
+
+        /* Full-width feature section */
+        .feature-section { background:#040804; }
+        .features-2col { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; margin-top:60px; }
+        .features-2col .text h2 { font-size:clamp(1.6rem,3.5vw,2.2rem); font-weight:800; margin-bottom:20px; }
+        .features-2col .text p { color:#888; line-height:1.8; margin-bottom:20px; }
+        .check-list { list-style:none; }
+        .check-list li { padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); color:#ccc; display:flex; gap:12px; align-items:flex-start; font-size:.95rem; }
+        .check-list li span.icon { color:var(--green); font-weight:700; margin-top:2px; }
+        .visual-box { background:rgba(51,255,0,0.04); border:1px solid rgba(51,255,0,0.15); border-radius:20px; padding:40px; }
+        .metric-row { display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+        .metric-row:last-child { border-bottom:none; }
+        .metric-label { color:#aaa; font-size:.9rem; }
+        .metric-bar { flex:1; height:6px; background:rgba(255,255,255,0.07); border-radius:3px; margin:0 16px; }
+        .metric-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--green),#28cc00); }
+        .metric-val { color:var(--green); font-weight:700; font-size:.9rem; min-width:40px; text-align:right; }
+
+        .process-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:24px; margin-top:60px; }
+        .step { text-align:center; padding:30px 20px; background:rgba(255,255,255,0.02); border-radius:16px; border:1px solid rgba(255,255,255,0.06); transition:.3s; }
+        .step:hover { border-color:rgba(51,255,0,0.25); transform:translateY(-4px); }
+        .step-num { width:64px; height:64px; border-radius:50%; background:rgba(51,255,0,0.08); border:1px solid rgba(51,255,0,0.3); display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; color:var(--green); margin:0 auto 16px; }
+        .step h4 { font-size:1rem; font-weight:700; margin-bottom:8px; }
+        .step p { color:#777; font-size:.85rem; line-height:1.6; }
+
+        .cta-strip { background:linear-gradient(135deg,rgba(51,255,0,0.1),rgba(0,0,0,0) 60%),rgba(255,255,255,0.02); border:1px solid rgba(51,255,0,0.2); border-radius:24px; padding:70px 40px; text-align:center; margin:0 auto; max-width:860px; }
+        .cta-strip h2 { font-size:clamp(1.6rem,3.5vw,2.4rem); font-weight:800; margin-bottom:16px; }
+        .cta-strip p { color:#888; margin-bottom:36px; font-size:1.05rem; }
+
+        .page-footer { background:#000; border-top:1px solid #111; padding:30px 60px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+        .page-footer span { color:#555; font-size:13px; }
+        .page-footer a { color:var(--green); text-decoration:none; font-size:13px; }
+
+        @media(max-width:900px) { .features-2col { grid-template-columns:1fr; } }
+        @media(max-width:768px) { .navbar { padding:16px 20px; } .nav-links { display:none; } .page-footer { padding:24px 20px; flex-direction:column; text-align:center; } }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">
+        <img src="/static/assets/logo.png" alt="DDS Logo">
+        <div class="logo-text"><span>Dilemmas Digital</span><small>Solutions</small></div>
+    </a>
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="{{ url_for('branding') }}">Branding</a>
+        <a href="{{ url_for('seo') }}">SEO</a>
+        <a href="{{ url_for('social_media') }}">Social Media</a>
+        <a href="{{ url_for('web_development') }}">Web Dev</a>
+    </nav>
+    <a href="/#about-company" class="nav-cta">Get a Quote</a>
+</header>
+
+<section class="service-hero">
+    <div>
+        <div class="hero-badge">💰 Paid Marketing</div>
+        <h1>Ads That Deliver<br><span>Real ROI.</span><br>Not Just Clicks.</h1>
+        <p>High-performance paid advertising campaigns across Google, Meta, and YouTube — engineered to maximize every rupee of your ad spend.</p>
+        <div class="hero-btns">
+            <a href="/#about-company" class="btn-primary">Start Advertising Today</a>
+            <a href="#platforms" class="btn-outline">View Platforms ↓</a>
+        </div>
+    </div>
+</section>
+
+<div class="stats-bar">
+    <div class="stats-grid">
+        <div class="stat-item"><h3>4.8x</h3><p>Average ROAS Delivered</p></div>
+        <div class="stat-item"><h3>40%</h3><p>Lower Cost Per Lead</p></div>
+        <div class="stat-item"><h3>₹2Cr+</h3><p>Ad Spend Managed</p></div>
+        <div class="stat-item"><h3>98%</h3><p>Campaign Renewal Rate</p></div>
+    </div>
+</div>
+
+<section id="platforms">
+    <div class="container">
+        <span class="section-label">Our Platforms</span>
+        <h2 class="section-title">Paid Advertising Services</h2>
+        <p class="section-sub">We manage high-converting campaigns across every major paid channel — tailored to your goals and budget.</p>
+
+        <div class="platform-grid">
+
+            <div class="platform-card">
+                <span class="platform-icon">🔍</span>
+                <h3>Google Ads</h3>
+                <p>Capture high-intent buyers at the exact moment they're searching for your product or service.</p>
+                <ul class="feature-list">
+                    <li>Search & Display campaigns</li>
+                    <li>Shopping / Performance Max</li>
+                    <li>Remarketing & RLSA</li>
+                    <li>Conversion tracking setup</li>
+                    <li>Keyword bidding strategy</li>
+                    <li>Landing page optimization</li>
+                </ul>
+            </div>
+
+            <div class="platform-card">
+                <span class="platform-icon">📱</span>
+                <h3>Social Ads</h3>
+                <p>Precision-targeted campaigns on Facebook, Instagram, and LinkedIn that build awareness and generate leads.</p>
+                <ul class="feature-list">
+                    <li>Facebook & Instagram Ads</li>
+                    <li>Audience segmentation & lookalikes</li>
+                    <li>Carousel, video & stories ads</li>
+                    <li>LinkedIn B2B campaigns</li>
+                    <li>Retargeting funnels</li>
+                    <li>Creative A/B testing</li>
+                </ul>
+            </div>
+
+            <div class="platform-card">
+                <span class="platform-icon">▶️</span>
+                <h3>YouTube Ads</h3>
+                <p>Engage your audience with video ads that tell your story and drive measurable action at scale.</p>
+                <ul class="feature-list">
+                    <li>Skippable & non-skippable ads</li>
+                    <li>Bumper ad campaigns</li>
+                    <li>YouTube remarketing</li>
+                    <li>Script & creative guidance</li>
+                    <li>View-through conversion tracking</li>
+                    <li>Brand lift measurement</li>
+                </ul>
+            </div>
+
+            <div class="platform-card">
+                <span class="platform-icon">🎯</span>
+                <h3>Lead Generation</h3>
+                <p>End-to-end lead gen systems — from ad click to qualified conversation — built for maximum conversion.</p>
+                <ul class="feature-list">
+                    <li>Lead magnet creation</li>
+                    <li>Facebook & Google Lead Ads</li>
+                    <li>High-converting landing pages</li>
+                    <li>CRM & WhatsApp integration</li>
+                    <li>Lead scoring & nurturing</li>
+                    <li>Cost-per-lead optimization</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- METRICS VISUAL -->
+<section class="feature-section">
+    <div class="container">
+        <div class="features-2col">
+            <div class="text">
+                <span class="section-label">Our Results</span>
+                <h2>Performance Metrics That Matter</h2>
+                <p>We focus on metrics that directly impact your bottom line — not impressions and vanity numbers.</p>
+                <ul class="check-list">
+                    <li><span class="icon">✓</span> Weekly performance reviews with full transparency</li>
+                    <li><span class="icon">✓</span> Real-time dashboard access — track spend & ROI live</li>
+                    <li><span class="icon">✓</span> Monthly strategy calls to refine and scale campaigns</li>
+                    <li><span class="icon">✓</span> Budget pacing to ensure zero wasted ad spend</li>
+                </ul>
+            </div>
+            <div class="visual-box">
+                <div class="metric-row"><span class="metric-label">ROAS</span><div class="metric-bar"><div class="metric-fill" style="width:88%"></div></div><span class="metric-val">4.8x</span></div>
+                <div class="metric-row"><span class="metric-label">CTR</span><div class="metric-bar"><div class="metric-fill" style="width:72%"></div></div><span class="metric-val">7.2%</span></div>
+                <div class="metric-row"><span class="metric-label">CVR</span><div class="metric-bar"><div class="metric-fill" style="width:65%"></div></div><span class="metric-val">6.5%</span></div>
+                <div class="metric-row"><span class="metric-label">CPL Reduction</span><div class="metric-bar"><div class="metric-fill" style="width:80%"></div></div><span class="metric-val">−40%</span></div>
+                <div class="metric-row"><span class="metric-label">Quality Score</span><div class="metric-bar"><div class="metric-fill" style="width:90%"></div></div><span class="metric-val">9/10</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROCESS -->
+<section>
+    <div class="container">
+        <span class="section-label">Our Process</span>
+        <h2 class="section-title">How We Run Your Campaigns</h2>
+        <div class="process-steps">
+            <div class="step"><div class="step-num">01</div><h4>Onboard</h4><p>Business goals, audience research & competitor analysis</p></div>
+            <div class="step"><div class="step-num">02</div><h4>Build</h4><p>Campaign structure, creatives, targeting & tracking setup</p></div>
+            <div class="step"><div class="step-num">03</div><h4>Launch</h4><p>Go live with controlled budget and A/B testing enabled</p></div>
+            <div class="step"><div class="step-num">04</div><h4>Optimise</h4><p>Daily monitoring, bid adjustments & creative swaps</p></div>
+            <div class="step"><div class="step-num">05</div><h4>Scale</h4><p>Proven winners scaled, budget reallocated to top performers</p></div>
+        </div>
+    </div>
+</section>
+
+<section style="padding:60px 20px 100px;">
+    <div class="container">
+        <div class="cta-strip">
+            <h2>Ready to Make Your Ad Budget Work Harder?</h2>
+            <p>Get a free paid media audit and discover your true growth potential.</p>
+            <a href="/#about-company" class="btn-primary">Get a Free Ad Audit →</a>
+        </div>
+    </div>
+</section>
+
+<footer class="page-footer">
+    <span>© 2026 Dilemmas Digital Solutions. All Rights Reserved.</span>
+    <a href="/">← Back to Home</a>
+</footer>
+
+</body>
+</html>

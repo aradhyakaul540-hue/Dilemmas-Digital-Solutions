@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branding – Dilemmas Digital Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root {
+            --green: #33ff00;
+            --dark: #000;
+            --card-bg: rgba(255,255,255,0.04);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+        body { background:#000; color:#fff; overflow-x:hidden; }
+
+        /* ---- NAVBAR (same as main) ---- */
+        .navbar {
+            position:fixed; top:0; width:100%;
+            padding:18px 60px;
+            display:flex; justify-content:space-between; align-items:center;
+            background:rgba(0,0,0,0.75); backdrop-filter:blur(12px); z-index:1000;
+        }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo img { height:40px; }
+        .logo-text span { font-size:22px; font-weight:700; color:#fff; }
+        .logo-text small { font-size:22px; font-weight:700; color:var(--green); }
+        .nav-links { display:flex; gap:30px; }
+        .nav-links a { color:#fff; text-decoration:none; font-weight:500; transition:.3s; }
+        .nav-links a:hover { color:var(--green); }
+        .nav-cta {
+            padding:9px 24px; background:var(--green); color:#000;
+            border-radius:25px; font-weight:700; text-decoration:none; transition:.3s;
+        }
+        .nav-cta:hover { background:#28cc00; }
+
+        /* ---- HERO ---- */
+        .service-hero {
+            min-height:100vh; display:flex; align-items:center; justify-content:center;
+            position:relative; overflow:hidden; text-align:center;
+            padding:140px 20px 80px;
+            background:radial-gradient(ellipse at 60% 40%, rgba(51,255,0,0.08) 0%, transparent 65%),
+                        radial-gradient(ellipse at 20% 80%, rgba(51,255,0,0.05) 0%, transparent 55%), #000;
+        }
+        .hero-badge {
+            display:inline-block; padding:6px 20px;
+            border:1px solid rgba(51,255,0,0.4); border-radius:30px;
+            color:var(--green); font-size:13px; letter-spacing:2px;
+            text-transform:uppercase; margin-bottom:22px;
+        }
+        .service-hero h1 {
+            font-size:clamp(2.8rem,6vw,5rem); font-weight:800;
+            line-height:1.1; margin-bottom:22px;
+        }
+        .service-hero h1 span { color:var(--green); }
+        .service-hero p {
+            max-width:620px; margin:0 auto 40px;
+            font-size:1.15rem; color:#aaa; line-height:1.8;
+        }
+        .hero-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+        .btn-primary {
+            padding:13px 34px; background:var(--green); color:#000;
+            border-radius:30px; font-weight:700; text-decoration:none; transition:.3s;
+        }
+        .btn-primary:hover { background:#28cc00; transform:translateY(-2px); }
+        .btn-outline {
+            padding:13px 34px; border:1px solid rgba(255,255,255,0.25); color:#fff;
+            border-radius:30px; font-weight:600; text-decoration:none; transition:.3s;
+        }
+        .btn-outline:hover { border-color:var(--green); color:var(--green); }
+
+        /* ---- SECTION COMMONS ---- */
+        section { padding:100px 20px; }
+        .section-label {
+            color:var(--green); font-size:13px; letter-spacing:3px;
+            text-transform:uppercase; margin-bottom:14px; display:block;
+        }
+        .section-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; margin-bottom:16px; }
+        .section-sub { color:#888; font-size:1.05rem; line-height:1.8; max-width:680px; }
+        .container { max-width:1200px; margin:0 auto; }
+
+        /* ---- SERVICES GRID ---- */
+        .services-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+            gap:28px; margin-top:60px;
+        }
+        .svc-card {
+            background:var(--card-bg);
+            border:1px solid rgba(255,255,255,0.07);
+            border-radius:20px; padding:36px 28px;
+            transition:.4s; position:relative; overflow:hidden;
+        }
+        .svc-card::before {
+            content:""; position:absolute; inset:0;
+            background:linear-gradient(135deg,rgba(51,255,0,0.06),transparent);
+            opacity:0; transition:.4s;
+        }
+        .svc-card:hover { transform:translateY(-8px); border-color:rgba(51,255,0,0.3); }
+        .svc-card:hover::before { opacity:1; }
+        .svc-icon {
+            width:54px; height:54px; border-radius:14px;
+            background:rgba(51,255,0,0.1); display:flex;
+            align-items:center; justify-content:center;
+            font-size:24px; margin-bottom:20px;
+        }
+        .svc-card h3 { font-size:1.2rem; font-weight:700; margin-bottom:10px; color:#fff; }
+        .svc-card p { color:#888; font-size:.95rem; line-height:1.7; }
+        .svc-card ul { color:#888; font-size:.9rem; line-height:1.9; list-style:none; margin-top:12px; }
+        .svc-card ul li::before { content:"→ "; color:var(--green); }
+
+        /* ---- PROCESS ---- */
+        .process-section { background:#050805; }
+        .process-steps {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+            gap:0; margin-top:60px; position:relative;
+        }
+        .process-steps::before {
+            content:""; position:absolute; top:36px; left:10%; right:10%;
+            height:1px; background:linear-gradient(90deg,transparent,rgba(51,255,0,0.3),transparent);
+        }
+        .step { text-align:center; padding:20px 16px; }
+        .step-num {
+            width:72px; height:72px; border-radius:50%;
+            background:rgba(51,255,0,0.08); border:1px solid rgba(51,255,0,0.3);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.4rem; font-weight:800; color:var(--green);
+            margin:0 auto 20px;
+        }
+        .step h4 { font-size:1rem; font-weight:700; margin-bottom:8px; }
+        .step p { color:#777; font-size:.88rem; line-height:1.6; }
+
+        /* ---- WHY US ---- */
+        .why-grid {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+            gap:24px; margin-top:60px;
+        }
+        .why-card {
+            border-left:3px solid var(--green); padding:24px 24px 24px 28px;
+            background:rgba(51,255,0,0.03); border-radius:0 12px 12px 0;
+        }
+        .why-card h4 { font-size:1.05rem; font-weight:700; margin-bottom:8px; }
+        .why-card p { color:#888; font-size:.9rem; line-height:1.6; }
+
+        /* ---- CTA STRIP ---- */
+        .cta-strip {
+            background:linear-gradient(135deg,rgba(51,255,0,0.12),rgba(0,0,0,0) 60%),
+                        rgba(255,255,255,0.02);
+            border:1px solid rgba(51,255,0,0.2); border-radius:24px;
+            padding:70px 40px; text-align:center;
+            margin:0 auto; max-width:860px;
+        }
+        .cta-strip h2 { font-size:clamp(1.6rem,3.5vw,2.4rem); font-weight:800; margin-bottom:16px; }
+        .cta-strip p { color:#888; margin-bottom:36px; font-size:1.05rem; }
+
+        /* ---- FOOTER ---- */
+        .page-footer {
+            background:#000; border-top:1px solid #111;
+            padding:30px 60px; display:flex;
+            justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+        }
+        .page-footer span { color:#555; font-size:13px; }
+        .page-footer a { color:var(--green); text-decoration:none; font-size:13px; }
+
+        @media(max-width:768px) {
+            .navbar { padding:16px 20px; }
+            .nav-links { display:none; }
+            .process-steps::before { display:none; }
+            .page-footer { padding:24px 20px; flex-direction:column; text-align:center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <a href="/" class="logo">
+        <img src="/static/assets/logo.png" alt="DDS Logo">
+        <div class="logo-text">
+            <span>Dilemmas Digital</span>
+            <small>Solutions</small>
+        </div>
+    </a>
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="{{ url_for('seo') }}">SEO</a>
+        <a href="{{ url_for('paid_marketing') }}">Paid Ads</a>
+        <a href="{{ url_for('social_media') }}">Social Media</a>
+        <a href="{{ url_for('web_development') }}">Web Dev</a>
+    </nav>
+    <a href="/#about-company" class="nav-cta">Get a Quote</a>
+</header>
+
+<!-- HERO -->
+<section class="service-hero">
+    <div>
+        <div class="hero-badge">🎨 Branding Services</div>
+        <h1>Build a Brand That<br><span>Commands Attention</span></h1>
+        <p>From identity design to reputation management, we craft brands that resonate deeply, inspire loyalty, and drive measurable business growth.</p>
+        <div class="hero-btns">
+            <a href="/#about-company" class="btn-primary">Start Your Brand Journey</a>
+            <a href="#services" class="btn-outline">Explore Services ↓</a>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+    <div class="container">
+        <span class="section-label">What We Offer</span>
+        <h2 class="section-title">Our Branding Services</h2>
+        <p class="section-sub">Every brand we build is rooted in research, driven by strategy, and expressed through unforgettable design.</p>
+
+        <div class="services-grid">
+
+            <div class="svc-card">
+                <div class="svc-icon">🔍</div>
+                <h3>Research & Analysis</h3>
+                <p>Deep-dive market and competitor research to uncover opportunities and position your brand for dominance.</p>
+                <ul>
+                    <li>Market landscape mapping</li>
+                    <li>Competitor brand audit</li>
+                    <li>Target audience profiling</li>
+                    <li>SWOT analysis</li>
+                    <li>Trend & opportunity reports</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">💎</div>
+                <h3>Brand Identity</h3>
+                <p>A cohesive visual system that tells your story at a glance — from logo to the full identity suite.</p>
+                <ul>
+                    <li>Logo design & variations</li>
+                    <li>Color palette & typography</li>
+                    <li>Brand guidelines document</li>
+                    <li>Business card & stationery</li>
+                    <li>Brand voice & tone guide</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">🎨</div>
+                <h3>Brand Assets</h3>
+                <p>Every touchpoint, perfectly crafted. Consistent visual assets across print, digital, and physical media.</p>
+                <ul>
+                    <li>Social media templates</li>
+                    <li>Presentation decks</li>
+                    <li>Packaging & merchandise</li>
+                    <li>Email signature kits</li>
+                    <li>Ad creative templates</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">📐</div>
+                <h3>Brand Strategy</h3>
+                <p>A clear roadmap for how your brand communicates, grows, and evolves in a competitive market.</p>
+                <ul>
+                    <li>Positioning statement</li>
+                    <li>Mission, vision & values</li>
+                    <li>Brand storytelling framework</li>
+                    <li>Go-to-market strategy</li>
+                    <li>Growth & scaling plan</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">🛡️</div>
+                <h3>ORM – Online Reputation Management</h3>
+                <p>Protect and elevate your digital reputation. We monitor, manage, and strengthen how the world perceives you.</p>
+                <ul>
+                    <li>Brand mention monitoring</li>
+                    <li>Review management</li>
+                    <li>Negative content suppression</li>
+                    <li>PR & positive press strategy</li>
+                    <li>Crisis communication plan</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">🔄</div>
+                <h3>Brand Refresh / Rebrand</h3>
+                <p>Is your brand stuck in the past? We modernize and evolve brands while preserving what makes them recognizable.</p>
+                <ul>
+                    <li>Brand audit & gap analysis</li>
+                    <li>Logo evolution</li>
+                    <li>Visual system update</li>
+                    <li>Messaging realignment</li>
+                    <li>Rebrand launch strategy</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section">
+    <div class="container">
+        <span class="section-label">How We Work</span>
+        <h2 class="section-title">Our Branding Process</h2>
+        <p class="section-sub">A structured, research-first approach that ensures every brand we build is built to last.</p>
+
+        <div class="process-steps">
+            <div class="step">
+                <div class="step-num">01</div>
+                <h4>Discovery</h4>
+                <p>Deep brand audit, market research & stakeholder interviews</p>
+            </div>
+            <div class="step">
+                <div class="step-num">02</div>
+                <h4>Strategy</h4>
+                <p>Positioning, messaging architecture & roadmap creation</p>
+            </div>
+            <div class="step">
+                <div class="step-num">03</div>
+                <h4>Design</h4>
+                <p>Identity creation, asset design & visual system build</p>
+            </div>
+            <div class="step">
+                <div class="step-num">04</div>
+                <h4>Refine</h4>
+                <p>Feedback rounds, iteration & final polish</p>
+            </div>
+            <div class="step">
+                <div class="step-num">05</div>
+                <h4>Launch</h4>
+                <p>Brand rollout, guidelines handoff & ongoing support</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHY US -->
+<section>
+    <div class="container">
+        <span class="section-label">Why Choose Us</span>
+        <h2 class="section-title">The DDS Branding Advantage</h2>
+        <p class="section-sub">We don't just make things look good. We engineer brands that perform.</p>
+
+        <div class="why-grid">
+            <div class="why-card">
+                <h4>Strategy Before Design</h4>
+                <p>Every visual decision is backed by research and business objectives — not just aesthetics.</p>
+            </div>
+            <div class="why-card">
+                <h4>Full-Stack Brand Team</h4>
+                <p>Strategists, designers, writers, and digital experts working together under one roof.</p>
+            </div>
+            <div class="why-card">
+                <h4>Built for Digital-First</h4>
+                <p>Brands that look stunning on screens, stories, feeds, websites, and every digital surface.</p>
+            </div>
+            <div class="why-card">
+                <h4>Transparent & Collaborative</h4>
+                <p>You're involved at every stage — no black box, no surprises. Just great work together.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:60px 20px 100px;">
+    <div class="container">
+        <div class="cta-strip">
+            <h2>Ready to Build a Brand That Wins?</h2>
+            <p>Let's talk about your vision and create something extraordinary together.</p>
+            <a href="/#about-company" class="btn-primary">Get a Free Brand Consultation →</a>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="page-footer">
+    <span>© 2026 Dilemmas Digital Solutions. All Rights Reserved.</span>
+    <a href="/">← Back to Home</a>
+</footer>
+
+</body>
+</html>

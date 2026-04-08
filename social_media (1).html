@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media – Dilemmas Digital Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root { --green:#33ff00; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+        body { background:#000; color:#fff; overflow-x:hidden; }
+
+        .navbar { position:fixed; top:0; width:100%; padding:18px 60px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.75); backdrop-filter:blur(12px); z-index:1000; }
+        .logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+        .logo img { height:40px; }
+        .logo-text span { font-size:22px; font-weight:700; color:#fff; }
+        .logo-text small { font-size:22px; font-weight:700; color:var(--green); }
+        .nav-links { display:flex; gap:30px; }
+        .nav-links a { color:#fff; text-decoration:none; font-weight:500; transition:.3s; }
+        .nav-links a:hover { color:var(--green); }
+        .nav-cta { padding:9px 24px; background:var(--green); color:#000; border-radius:25px; font-weight:700; text-decoration:none; transition:.3s; }
+        .nav-cta:hover { background:#28cc00; }
+
+        .service-hero {
+            min-height:100vh; display:flex; align-items:center; justify-content:center;
+            text-align:center; padding:140px 20px 80px; position:relative; overflow:hidden;
+            background:radial-gradient(ellipse at 30% 30%, rgba(51,255,0,0.08) 0%, transparent 55%),
+                        radial-gradient(ellipse at 75% 70%, rgba(51,255,0,0.05) 0%, transparent 50%), #000;
+        }
+        .hero-badge { display:inline-block; padding:6px 20px; border:1px solid rgba(51,255,0,0.4); border-radius:30px; color:var(--green); font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-bottom:22px; }
+        .service-hero h1 { font-size:clamp(2.8rem,6vw,5rem); font-weight:800; line-height:1.1; margin-bottom:22px; }
+        .service-hero h1 span { color:var(--green); }
+        .service-hero p { max-width:640px; margin:0 auto 40px; font-size:1.15rem; color:#aaa; line-height:1.8; }
+        .hero-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+        .btn-primary { padding:13px 34px; background:var(--green); color:#000; border-radius:30px; font-weight:700; text-decoration:none; transition:.3s; }
+        .btn-primary:hover { background:#28cc00; transform:translateY(-2px); }
+        .btn-outline { padding:13px 34px; border:1px solid rgba(255,255,255,0.25); color:#fff; border-radius:30px; font-weight:600; text-decoration:none; transition:.3s; }
+        .btn-outline:hover { border-color:var(--green); color:var(--green); }
+
+        .stats-bar { background:#060a06; border-top:1px solid #111; border-bottom:1px solid #111; padding:40px 20px; }
+        .stats-grid { max-width:900px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:20px; text-align:center; }
+        .stat-item h3 { font-size:2.2rem; font-weight:800; color:var(--green); }
+        .stat-item p { color:#777; font-size:.9rem; }
+
+        section { padding:100px 20px; }
+        .section-label { color:var(--green); font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-bottom:14px; display:block; }
+        .section-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; margin-bottom:16px; }
+        .section-sub { color:#888; font-size:1.05rem; line-height:1.8; max-width:680px; }
+        .container { max-width:1200px; margin:0 auto; }
+
+        .services-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:28px; margin-top:60px; }
+        .svc-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:20px; padding:36px 28px; transition:.4s; }
+        .svc-card:hover { transform:translateY(-8px); border-color:rgba(51,255,0,0.3); background:rgba(51,255,0,0.03); }
+        .svc-icon { width:54px; height:54px; border-radius:14px; background:rgba(51,255,0,0.08); display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:20px; }
+        .svc-card h3 { font-size:1.2rem; font-weight:700; margin-bottom:10px; }
+        .svc-card p { color:#888; font-size:.95rem; line-height:1.7; }
+        .svc-card ul { color:#888; font-size:.9rem; line-height:1.9; list-style:none; margin-top:12px; }
+        .svc-card ul li { padding:4px 0; }
+        .svc-card ul li::before { content:"▸ "; color:var(--green); }
+
+        /* Platforms row */
+        .platforms-section { background:#040804; }
+        .platforms-row { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:50px; }
+        .platform-pill {
+            display:flex; align-items:center; gap:12px;
+            padding:16px 28px; border-radius:50px;
+            background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+            transition:.3s; cursor:default;
+        }
+        .platform-pill:hover { border-color:rgba(51,255,0,0.4); background:rgba(51,255,0,0.05); transform:translateY(-3px); }
+        .platform-pill .emoji { font-size:22px; }
+        .platform-pill span { font-weight:600; }
+
+        /* Content types */
+        .content-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; margin-top:60px; }
+        .content-type { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:28px 22px; text-align:center; transition:.3s; }
+        .content-type:hover { border-color:rgba(51,255,0,0.3); transform:translateY(-5px); }
+        .content-type .emoji { font-size:32px; display:block; margin-bottom:12px; }
+        .content-type h4 { font-size:.95rem; font-weight:700; margin-bottom:8px; }
+        .content-type p { color:#777; font-size:.85rem; line-height:1.5; }
+
+        .process-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:24px; margin-top:60px; }
+        .step { text-align:center; padding:30px 20px; background:rgba(255,255,255,0.02); border-radius:16px; border:1px solid rgba(255,255,255,0.06); transition:.3s; }
+        .step:hover { border-color:rgba(51,255,0,0.25); transform:translateY(-4px); }
+        .step-num { width:64px; height:64px; border-radius:50%; background:rgba(51,255,0,0.08); border:1px solid rgba(51,255,0,0.3); display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; color:var(--green); margin:0 auto 16px; }
+        .step h4 { font-size:1rem; font-weight:700; margin-bottom:8px; }
+        .step p { color:#777; font-size:.85rem; line-height:1.6; }
+
+        .why-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:24px; margin-top:60px; }
+        .why-card { border-left:3px solid var(--green); padding:24px 24px 24px 28px; background:rgba(51,255,0,0.03); border-radius:0 12px 12px 0; }
+        .why-card h4 { font-size:1.05rem; font-weight:700; margin-bottom:8px; }
+        .why-card p { color:#888; font-size:.9rem; line-height:1.6; }
+
+        .cta-strip { background:linear-gradient(135deg,rgba(51,255,0,0.1),rgba(0,0,0,0) 60%),rgba(255,255,255,0.02); border:1px solid rgba(51,255,0,0.2); border-radius:24px; padding:70px 40px; text-align:center; margin:0 auto; max-width:860px; }
+        .cta-strip h2 { font-size:clamp(1.6rem,3.5vw,2.4rem); font-weight:800; margin-bottom:16px; }
+        .cta-strip p { color:#888; margin-bottom:36px; font-size:1.05rem; }
+
+        .page-footer { background:#000; border-top:1px solid #111; padding:30px 60px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+        .page-footer span { color:#555; font-size:13px; }
+        .page-footer a { color:var(--green); text-decoration:none; font-size:13px; }
+
+        @media(max-width:768px) { .navbar { padding:16px 20px; } .nav-links { display:none; } .page-footer { padding:24px 20px; flex-direction:column; text-align:center; } }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">
+        <img src="/static/assets/logo.png" alt="DDS Logo">
+        <div class="logo-text"><span>Dilemmas Digital</span><small>Solutions</small></div>
+    </a>
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="{{ url_for('branding') }}">Branding</a>
+        <a href="{{ url_for('seo') }}">SEO</a>
+        <a href="{{ url_for('paid_marketing') }}">Paid Ads</a>
+        <a href="{{ url_for('web_development') }}">Web Dev</a>
+    </nav>
+    <a href="/#about-company" class="nav-cta">Get a Quote</a>
+</header>
+
+<section class="service-hero">
+    <div>
+        <div class="hero-badge">📲 Social Media Services</div>
+        <h1>Build a Social Presence<br>That <span>Commands</span><br>Your Niche.</h1>
+        <p>From viral content creation to full account management and influencer partnerships — we turn your social media into a powerful growth engine.</p>
+        <div class="hero-btns">
+            <a href="/#about-company" class="btn-primary">Grow My Socials</a>
+            <a href="#services" class="btn-outline">Explore Services ↓</a>
+        </div>
+    </div>
+</section>
+
+<div class="stats-bar">
+    <div class="stats-grid">
+        <div class="stat-item"><h3>50K+</h3><p>Followers Grown for Clients</p></div>
+        <div class="stat-item"><h3>8x</h3><p>Average Engagement Lift</p></div>
+        <div class="stat-item"><h3>200+</h3><p>Pieces of Content Monthly</p></div>
+        <div class="stat-item"><h3>100%</h3><p>Brand-Safe Content Always</p></div>
+    </div>
+</div>
+
+<section id="services">
+    <div class="container">
+        <span class="section-label">What We Offer</span>
+        <h2 class="section-title">Social Media Services</h2>
+        <p class="section-sub">Everything your brand needs to dominate social — strategy, content, growth, and community management.</p>
+
+        <div class="services-grid">
+
+            <div class="svc-card">
+                <div class="svc-icon">🎬</div>
+                <h3>Content Creation</h3>
+                <p>Scroll-stopping content designed for each platform's unique format and audience behaviour.</p>
+                <ul>
+                    <li>Reels & short-form video</li>
+                    <li>Static posts & carousels</li>
+                    <li>Stories & highlights</li>
+                    <li>Copywriting & captions</li>
+                    <li>Hashtag research & strategy</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">📊</div>
+                <h3>Account Management</h3>
+                <p>Full-service social media management — so you can focus on your business while we grow your audience.</p>
+                <ul>
+                    <li>Content calendar planning</li>
+                    <li>Daily posting & scheduling</li>
+                    <li>Community management & DMs</li>
+                    <li>Comment monitoring & replies</li>
+                    <li>Monthly analytics reports</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">🤝</div>
+                <h3>Influencer Marketing</h3>
+                <p>Connect with the right influencers to amplify your brand message authentically and reach new audiences.</p>
+                <ul>
+                    <li>Influencer discovery & vetting</li>
+                    <li>Campaign brief creation</li>
+                    <li>Negotiation & contracting</li>
+                    <li>Content review & approval</li>
+                    <li>ROI & reach reporting</li>
+                </ul>
+            </div>
+
+            <div class="svc-card">
+                <div class="svc-icon">🚀</div>
+                <h3>Followers Growth</h3>
+                <p>Organic and amplified growth strategies that build real, engaged audiences — not bots.</p>
+                <ul>
+                    <li>Audience targeting strategy</li>
+                    <li>Engagement pod management</li>
+                    <li>Cross-platform promotion</li>
+                    <li>Viral content strategy</li>
+                    <li>Growth analytics tracking</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- PLATFORMS -->
+<section class="platforms-section">
+    <div class="container">
+        <span class="section-label">Platforms We Manage</span>
+        <h2 class="section-title">We're Experts Across Every Major Platform</h2>
+        <div class="platforms-row">
+            <div class="platform-pill"><span class="emoji">📸</span><span>Instagram</span></div>
+            <div class="platform-pill"><span class="emoji">👥</span><span>Facebook</span></div>
+            <div class="platform-pill"><span class="emoji">🎵</span><span>TikTok</span></div>
+            <div class="platform-pill"><span class="emoji">▶️</span><span>YouTube</span></div>
+            <div class="platform-pill"><span class="emoji">🐦</span><span>Twitter / X</span></div>
+            <div class="platform-pill"><span class="emoji">💼</span><span>LinkedIn</span></div>
+            <div class="platform-pill"><span class="emoji">📌</span><span>Pinterest</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTENT TYPES -->
+<section>
+    <div class="container">
+        <span class="section-label">Content Formats</span>
+        <h2 class="section-title">Every Format. Every Platform.</h2>
+        <div class="content-grid">
+            <div class="content-type"><span class="emoji">🎥</span><h4>Reels & TikToks</h4><p>Short-form video built for reach and virality</p></div>
+            <div class="content-type"><span class="emoji">🖼️</span><h4>Static Graphics</h4><p>On-brand visuals that stop the scroll</p></div>
+            <div class="content-type"><span class="emoji">📖</span><h4>Carousels</h4><p>Multi-slide educational & story posts</p></div>
+            <div class="content-type"><span class="emoji">💬</span><h4>Stories</h4><p>24-hour content with polls, links & CTAs</p></div>
+            <div class="content-type"><span class="emoji">📝</span><h4>Long-form Posts</h4><p>Thought leadership & community building</p></div>
+            <div class="content-type"><span class="emoji">🔴</span><h4>Live Strategy</h4><p>Live session planning & promotion</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- PROCESS -->
+<section style="background:#040804; padding:100px 20px;">
+    <div class="container">
+        <span class="section-label">Our Process</span>
+        <h2 class="section-title">How We Grow Your Social Presence</h2>
+        <div class="process-steps">
+            <div class="step"><div class="step-num">01</div><h4>Audit</h4><p>Review current accounts, content & competitor landscape</p></div>
+            <div class="step"><div class="step-num">02</div><h4>Strategy</h4><p>Platform strategy, content pillars & growth roadmap</p></div>
+            <div class="step"><div class="step-num">03</div><h4>Create</h4><p>Monthly content batch creation & scheduling</p></div>
+            <div class="step"><div class="step-num">04</div><h4>Publish</h4><p>Consistent posting at peak engagement times</p></div>
+            <div class="step"><div class="step-num">05</div><h4>Analyse</h4><p>Weekly insights & monthly growth reports</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- WHY US -->
+<section>
+    <div class="container">
+        <span class="section-label">Why DDS</span>
+        <h2 class="section-title">Social Media That Actually Grows</h2>
+        <div class="why-grid">
+            <div class="why-card"><h4>Platform-Native Content</h4><p>We create content built specifically for each platform — not the same post copy-pasted everywhere.</p></div>
+            <div class="why-card"><h4>In-House Creative Team</h4><p>Designers, videographers, and copywriters who understand your brand voice deeply.</p></div>
+            <div class="why-card"><h4>Data-Driven Decisions</h4><p>Every content decision is backed by analytics — we double down on what works, cut what doesn't.</p></div>
+            <div class="why-card"><h4>No Long-Term Lock-In</h4><p>Flexible monthly plans. We earn your trust every month through consistent results.</p></div>
+        </div>
+    </div>
+</section>
+
+<section style="padding:60px 20px 100px;">
+    <div class="container">
+        <div class="cta-strip">
+            <h2>Ready to Dominate Social Media?</h2>
+            <p>Let's build a social presence that turns followers into loyal customers.</p>
+            <a href="/#about-company" class="btn-primary">Start Growing Today →</a>
+        </div>
+    </div>
+</section>
+
+<footer class="page-footer">
+    <span>© 2026 Dilemmas Digital Solutions. All Rights Reserved.</span>
+    <a href="/">← Back to Home</a>
+</footer>
+
+</body>
+</html>
