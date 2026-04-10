@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect, session, url_for, Response
-from mysql.connector import pooling
+import psycopg2
+from psycopg2 import pool
+from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import smtplib
 from email.mime.text import MIMEText
@@ -16,26 +18,27 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_change_me")
 
 # =================================================
-# DATABASE POOL (credentials from .env)
+# DATABASE POOL (PostgreSQL via Render)
 # =================================================
-db_pool = pooling.MySQLConnectionPool(
-    pool_name="crm_pool",
-    pool_size=5,
-    host=os.getenv("DB_HOST", "localhost"),
-    user=os.getenv("DB_USER", "root"),
-    password=os.getenv("DB_PASSWORD", ""),
-    database=os.getenv("DB_NAME", "dds_leads"),
+db_pool = pool.SimpleConnectionPool(
+    minconn=1,
+    maxconn=5,
+    dsn=os.getenv("DATABASE_URL"),   # Render provides this automatically
+    sslmode="require"                # Render PostgreSQL requires SSL
 )
 
 def get_db():
-    return db_pool.get_connection()
+    return db_pool.getconn()
+
+def release_db(conn):
+    db_pool.putconn(conn)
 
 # =================================================
 # EMAIL CONFIG (from .env)
 # =================================================
-EMAIL       = os.getenv("EMAIL_SENDER")
+EMAIL        = os.getenv("EMAIL_SENDER")
 APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
-TO_EMAIL    = os.getenv("EMAIL_RECEIVER")
+TO_EMAIL     = os.getenv("EMAIL_RECEIVER")
 
 # =================================================
 # ROLE-BASED SECURITY DECORATOR
@@ -70,17 +73,19 @@ def create_admin():
         ("sales",   "sales@dds1",   "Sales"),
     ]
     conn = get_db()
-    cursor = conn.cursor()
-    for username, password, role in admins:
-        cursor.execute("SELECT * FROM admins WHERE username=%s", (username,))
-        if not cursor.fetchone():
-            cursor.execute(
-                "INSERT INTO admins (username, password, role) VALUES (%s,%s,%s)",
-                (username, generate_password_hash(password), role),
-            )
-    conn.commit()
-    cursor.close()
-    conn.close()
+    try:
+        cursor = conn.cursor()
+        for username, password, role in admins:
+            cursor.execute("SELECT * FROM admins WHERE username=%s", (username,))
+            if not cursor.fetchone():
+                cursor.execute(
+                    "INSERT INTO admins (username, password, role) VALUES (%s, %s, %s)",
+                    (username, generate_password_hash(password), role),
+                )
+        conn.commit()
+        cursor.close()
+    finally:
+        release_db(conn)
     return "Default admins created."
 
 # =================================================
@@ -91,17 +96,19 @@ def submit():
     try:
         data = request.get_json()
         conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO contacts (name, company, phone, email, address, service, status)
-            VALUES (%s,%s,%s,%s,%s,%s,'New')
-        """, (
-            data["name"], data["company"], data["phone"],
-            data["email"], data["address"], data["service"],
-        ))
-        conn.commit()
-        cursor.close()
-        conn.close()
+        try:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO contacts (name, company, phone, email, address, service, status)
+                VALUES (%s, %s, %s, %s, %s, %s, 'New')
+            """, (
+                data["name"], data["company"], data["phone"],
+                data["email"], data["address"], data["service"],
+            ))
+            conn.commit()
+            cursor.close()
+        finally:
+            release_db(conn)
 
         # Email alert
         try:
@@ -138,11 +145,13 @@ def admin_login():
         username = request.form.get("username")
         password = request.form.get("password")
         conn = get_db()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM admins WHERE username=%s", (username,))
-        admin = cursor.fetchone()
-        cursor.close()
-        conn.close()
+        try:
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute("SELECT * FROM admins WHERE username=%s", (username,))
+            admin = cursor.fetchone()
+            cursor.close()
+        finally:
+            release_db(conn)
         if admin and check_password_hash(admin["password"], password):
             session["admin"] = admin["username"]
             session["role"]  = admin["role"]
@@ -157,17 +166,19 @@ def admin_login():
 @login_required()
 def dashboard():
     conn = get_db()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM contacts ORDER BY id DESC")
-    leads = cursor.fetchall()
-    cursor.execute("SELECT COUNT(*) AS total FROM contacts")
-    total = cursor.fetchone()["total"]
-    cursor.execute("SELECT COUNT(*) AS today FROM contacts WHERE DATE(created_at)=CURDATE()")
-    today = cursor.fetchone()["today"]
-    cursor.execute("SELECT COUNT(*) AS new_leads FROM contacts WHERE status='New'")
-    new_leads = cursor.fetchone()["new_leads"]
-    cursor.close()
-    conn.close()
+    try:
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("SELECT * FROM contacts ORDER BY id DESC")
+        leads = cursor.fetchall()
+        cursor.execute("SELECT COUNT(*) AS total FROM contacts")
+        total = cursor.fetchone()["total"]
+        cursor.execute("SELECT COUNT(*) AS today FROM contacts WHERE DATE(created_at)=CURRENT_DATE")
+        today = cursor.fetchone()["today"]
+        cursor.execute("SELECT COUNT(*) AS new_leads FROM contacts WHERE status='New'")
+        new_leads = cursor.fetchone()["new_leads"]
+        cursor.close()
+    finally:
+        release_db(conn)
     return render_template(
         "admin_dashboard.html",
         leads=leads, total_leads=total,
@@ -182,11 +193,13 @@ def dashboard():
 def update_status(lead_id):
     status = request.json.get("status")
     conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE contacts SET status=%s WHERE id=%s", (status, lead_id))
-    conn.commit()
-    cursor.close()
-    conn.close()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE contacts SET status=%s WHERE id=%s", (status, lead_id))
+        conn.commit()
+        cursor.close()
+    finally:
+        release_db(conn)
     return jsonify({"success": True})
 
 # =================================================
@@ -196,11 +209,13 @@ def update_status(lead_id):
 @login_required(role=["CEO"])
 def delete_lead(lead_id):
     conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM contacts WHERE id=%s", (lead_id,))
-    conn.commit()
-    cursor.close()
-    conn.close()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM contacts WHERE id=%s", (lead_id,))
+        conn.commit()
+        cursor.close()
+    finally:
+        release_db(conn)
     return jsonify({"success": True})
 
 # =================================================
@@ -210,11 +225,13 @@ def delete_lead(lead_id):
 @login_required()
 def export_csv():
     conn = get_db()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM contacts")
-    leads = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    try:
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("SELECT * FROM contacts")
+        leads = cursor.fetchall()
+        cursor.close()
+    finally:
+        release_db(conn)
     si = StringIO()
     writer = csv.writer(si)
     writer.writerow(["ID", "Name", "Company", "Phone", "Email", "Service", "Status"])
@@ -268,5 +285,4 @@ def portfolio():
 
 # =================================================
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=os.getenv("FLASK_DEBUG", "0") == "1")
