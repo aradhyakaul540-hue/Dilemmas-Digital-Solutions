@@ -19,19 +19,24 @@ app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_change_me")
 
 # =================================================
 # DATABASE POOL (PostgreSQL via Render)
+# =# =================================================
+# DATABASE POOL (PostgreSQL via Render)
 # =================================================
-    DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Fix for Render (important for postgres:// → postgresql://)
-if DATABASE_URL.startswith("postgres://"):
+# Fix Render URL format
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-db_pool = pool.SimpleConnectionPool(
-    minconn=1,
-    maxconn=5,
-    dsn=DATABASE_URL + "?sslmode=require"
-)            # Render PostgreSQL requires SSL
-
+try:
+    db_pool = pool.SimpleConnectionPool(
+        minconn=1,
+        maxconn=5,
+        dsn=DATABASE_URL + "?sslmode=require"
+    )
+    print("✅ Database connected successfully")
+except Exception as e:
+    print("❌ Database connection error:", e)
 
 def get_db():
     return db_pool.getconn()
