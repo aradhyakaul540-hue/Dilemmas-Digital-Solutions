@@ -19,8 +19,6 @@ app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_change_me")
 
 # =================================================
 # DATABASE POOL (PostgreSQL via Render)
-# =# =================================================
-# DATABASE POOL (PostgreSQL via Render)
 # =================================================
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -28,6 +26,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
+db_pool = None
 try:
     db_pool = pool.SimpleConnectionPool(
         minconn=1,
@@ -38,11 +37,14 @@ try:
 except Exception as e:
     print("❌ Database connection error:", e)
 
+
 def get_db():
     return db_pool.getconn()
 
+
 def release_db(conn):
     db_pool.putconn(conn)
+
 
 # =================================================
 # EMAIL CONFIG (from .env)
@@ -66,6 +68,7 @@ def login_required(role=None):
         return wrapper
     return decorator
 
+
 # =================================================
 # HOME
 # =================================================
@@ -73,20 +76,37 @@ def login_required(role=None):
 def home():
     return render_template("index.html")
 
+
 # =================================================
-# CREATE DEFAULT ADMINS
+# CREATE DEFAULT ADMINS (protected — one-time setup only)
 # =================================================
+# This route used to be public with hardcoded passwords baked into the
+# source code, which is a serious security risk on a public GitHub repo.
+# It now requires a secret token (set as SETUP_TOKEN in your .env / Render
+# environment variables) passed as a query string, e.g.:
+#   /create-admin?token=YOUR_SECRET_TOKEN
+# Once you've created your real admins, delete this route entirely or
+# rotate SETUP_TOKEN so it can't be reused.
 @app.route("/create-admin")
 def create_admin():
+    setup_token = os.getenv("SETUP_TOKEN")
+    provided_token = request.args.get("token")
+
+    if not setup_token or provided_token != setup_token:
+        return "Not authorized", 403
+
     admins = [
-        ("ceo",     "ceo@dds1",     "CEO"),
-        ("manager", "manager@dds1", "Manager"),
-        ("sales",   "sales@dds1",   "Sales"),
+        ("ceo",     os.getenv("DEFAULT_CEO_PASSWORD", ""),     "CEO"),
+        ("manager", os.getenv("DEFAULT_MANAGER_PASSWORD", ""), "Manager"),
+        ("sales",   os.getenv("DEFAULT_SALES_PASSWORD", ""),   "Sales"),
     ]
+
     conn = get_db()
     try:
         cursor = conn.cursor()
         for username, password, role in admins:
+            if not password:
+                continue
             cursor.execute("SELECT * FROM admins WHERE username=%s", (username,))
             if not cursor.fetchone():
                 cursor.execute(
@@ -97,7 +117,8 @@ def create_admin():
         cursor.close()
     finally:
         release_db(conn)
-    return "Default admins created."
+    return "Default admins created (only for accounts with a password set)."
+
 
 # =================================================
 # SUBMIT LEAD
@@ -147,6 +168,7 @@ Service: {data['service']}
         print("Submit error:", e)
         return jsonify({"status": "error"}), 500
 
+
 # =================================================
 # ADMIN LOGIN
 # =================================================
@@ -155,6 +177,10 @@ def admin_login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+
+        if not username or not password:
+            return render_template("admin_login.html", error="Username and password required")
+
         conn = get_db()
         try:
             cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -163,12 +189,25 @@ def admin_login():
             cursor.close()
         finally:
             release_db(conn)
-        if admin and check_password_hash(admin["password"], password):
+
+        # Guard against malformed/placeholder hashes in the DB so a bad
+        # row can never crash the login route with a 500 again.
+        valid_login = False
+        if admin and admin.get("password"):
+            try:
+                valid_login = check_password_hash(admin["password"], password)
+            except (ValueError, TypeError):
+                valid_login = False
+
+        if valid_login:
             session["admin"] = admin["username"]
             session["role"]  = admin["role"]
             return redirect(url_for("dashboard"))
+
         return render_template("admin_login.html", error="Invalid credentials")
+
     return render_template("admin_login.html")
+
 
 # =================================================
 # DASHBOARD
@@ -196,6 +235,7 @@ def dashboard():
         today_leads=today, new_leads=new_leads,
     )
 
+
 # =================================================
 # UPDATE STATUS
 # =================================================
@@ -213,6 +253,7 @@ def update_status(lead_id):
         release_db(conn)
     return jsonify({"success": True})
 
+
 # =================================================
 # DELETE LEAD
 # =================================================
@@ -228,6 +269,7 @@ def delete_lead(lead_id):
     finally:
         release_db(conn)
     return jsonify({"success": True})
+
 
 # =================================================
 # EXPORT CSV
@@ -255,6 +297,7 @@ def export_csv():
         headers={"Content-Disposition": "attachment; filename=crm_leads.csv"},
     )
 
+
 # =================================================
 # LOGOUT
 # =================================================
@@ -263,6 +306,7 @@ def logout():
     session.clear()
     return redirect(url_for("admin_login"))
 
+
 # =================================================
 # SERVICE PAGES
 # =================================================
@@ -270,29 +314,36 @@ def logout():
 def branding():
     return render_template("branding.html")
 
+
 @app.route("/seo")
 def seo():
     return render_template("seo.html")
+
 
 @app.route("/paid-marketing")
 def paid_marketing():
     return render_template("paid_marketing.html")
 
+
 @app.route("/social-media")
 def social_media():
     return render_template("social_media.html")
+
 
 @app.route("/web-development")
 def web_development():
     return render_template("web_development.html")
 
+
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
 
+
 @app.route('/portfolio')
 def portfolio():
     return render_template('portfolio.html')
+
 
 # =================================================
 if __name__ == "__main__":
