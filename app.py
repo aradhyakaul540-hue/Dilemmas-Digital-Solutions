@@ -174,40 +174,86 @@ Service: {data['service']}
 # =================================================
 @app.route("/admin", methods=["GET", "POST"])
 def admin_login():
+
     if request.method == "POST":
+
         username = request.form.get("username")
         password = request.form.get("password")
 
         if not username or not password:
-            return render_template("admin_login.html", error="Username and password required")
+            response = make_response(
+                render_template(
+                    "admin_login.html",
+                    error="Username and password required"
+                )
+            )
+
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+
+            return response
 
         conn = get_db()
+
         try:
             cursor = conn.cursor(cursor_factory=RealDictCursor)
-            cursor.execute("SELECT * FROM admins WHERE username=%s", (username,))
+
+            cursor.execute(
+                "SELECT * FROM admins WHERE username=%s",
+                (username,)
+            )
+
             admin = cursor.fetchone()
             cursor.close()
+
         finally:
             release_db(conn)
 
-        # Guard against malformed/placeholder hashes in the DB so a bad
-        # row can never crash the login route with a 500 again.
+        # Validate password safely
         valid_login = False
+
         if admin and admin.get("password"):
             try:
-                valid_login = check_password_hash(admin["password"], password)
+                valid_login = check_password_hash(
+                    admin["password"],
+                    password
+                )
+
             except (ValueError, TypeError):
                 valid_login = False
 
         if valid_login:
+
             session["admin"] = admin["username"]
-            session["role"]  = admin["role"]
+            session["role"] = admin["role"]
+
             return redirect(url_for("dashboard"))
 
-        return render_template("admin_login.html", error="Invalid credentials")
+        response = make_response(
+            render_template(
+                "admin_login.html",
+                error="Invalid credentials"
+            )
+        )
 
-    return render_template("admin_login.html")
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
 
+        return response
+
+    # GET request
+    response = make_response(
+        render_template("admin_login.html")
+    )
+
+    # Prevent login page from being stored in browser cache
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+
+    return response
 
 # =================================================
 # DASHBOARD
