@@ -25,7 +25,7 @@ load_dotenv()
 
 # =================================================
 
-app = Flask(**name**)
+app = Flask(__name__)
 
 app.secret_key = os.getenv(
 "SECRET_KEY",
@@ -1087,8 +1087,7 @@ return render_template(
 # RUN APP
 
 # =================================================
-
-if **name** == "**main**":
+if __name__ == "__main__":
 
 ```
 app.run(
