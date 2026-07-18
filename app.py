@@ -261,26 +261,44 @@ def admin_login():
 @app.route("/dashboard")
 @login_required()
 def dashboard():
+
     conn = get_db()
+
     try:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
+
         cursor.execute("SELECT * FROM contacts ORDER BY id DESC")
         leads = cursor.fetchall()
+
         cursor.execute("SELECT COUNT(*) AS total FROM contacts")
         total = cursor.fetchone()["total"]
-        cursor.execute("SELECT COUNT(*) AS today FROM contacts WHERE DATE(created_at)=CURRENT_DATE")
+
+        cursor.execute("""
+            SELECT COUNT(*) AS today
+            FROM contacts
+            WHERE DATE(created_at) = CURRENT_DATE
+        """)
         today = cursor.fetchone()["today"]
-        cursor.execute("SELECT COUNT(*) AS new_leads FROM contacts WHERE status='New'")
+
+        cursor.execute("""
+            SELECT COUNT(*) AS new_leads
+            FROM contacts
+            WHERE status = 'New'
+        """)
         new_leads = cursor.fetchone()["new_leads"]
+
         cursor.close()
+
     finally:
         release_db(conn)
+
     return render_template(
         "admin_dashboard.html",
-        leads=leads, total_leads=total,
-        today_leads=today, new_leads=new_leads,
+        leads=leads,
+        total_leads=total,
+        today_leads=today,
+        new_leads=new_leads
     )
-
 
 # =================================================
 # UPDATE STATUS
