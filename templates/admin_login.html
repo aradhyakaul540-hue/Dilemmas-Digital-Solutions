@@ -221,10 +221,15 @@
         {% endif %}
     </div>
 
-    <form action="/" method="GET">
-        <button type="submit" class="home">Back to Home</button>
-    </form>
+  <button type="button" class="home" onclick="goHome()">
+    Back to Home
+</button>
 
+<script>
+    function goHome() {
+        window.location.replace("/");
+    }
+</script>
 </header>
 
 <!-- LOGIN SECTION -->
